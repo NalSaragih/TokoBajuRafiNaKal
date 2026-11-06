@@ -68,6 +68,19 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 | `quantity_change` | INT            | Jumlah perubahan (`+` untuk stok masuk, `-` untuk terjual/keluar). |
 | `reference_id`    | INT            | (Opsional) Merujuk ke `transaction_id` jika perubahan karena penjualan. |
 
-##Skema Class
+## Skema Class
+
+### Paket: `com.mycompany.tokobajurafinakal` 
+*   `TokoBajuRafiNaKal.java`: *Class* utama yang berfungsi untuk menginisialisasi tema FlatDarkLaf dan memicu tampilan awal aplikasi.
+*   `DatabaseHelper.java`: *Class* utilitas yang menangani koneksi MySQL, serta eksekusi *query* umum.
+
+### Paket: `com.mycompany.tokobajurafinakal.view` 
+*   `MainFrame.java`: *Frame* utama yang menampilkan katalog baju, gambar produk (dari BLOB), harga, dan stok yang tersedia.
+*   `CartFrame.java`: *Frame* untuk melihat isi keranjang belanja, melihat total harga, dan melakukan aksi Checkout.
+*   `StockManagementFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+
+### Paket: `com.mycompany.tokobajurafinakal.controller` (Logika & Pemrosesan)
+*   `ProductController.java`: Menangani operasi CRUD produk, termasuk mengambil gambar BLOB, memperbarui `current_stock`, dan memasukkan catatan ke `product_logs`.
+*   `TransactionController.java`: Menangani logika saat *checkout*. *Class* ini akan memastikan bahwa insert ke `transactions`, `transaction_details`, dan pemotongan stok dilakukan dalam satu kesatuan proses
 
 
