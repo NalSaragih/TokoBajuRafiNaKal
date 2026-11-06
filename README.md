@@ -9,7 +9,27 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 - Kasir: Melaksanakan transaksi untuk barang yang disimpan dalam keranjang
 - Penyimpanan: Menghapus dan menambah stok barang ke database.
 
-## Alur (user)
+## Alur
+
+### 1. Alur Kasir (Transaksi Penjualan)
+1. Membuka Aplikasi: Sistem memuat antarmuka (FlatLaf) dan menghubungkan ke database.
+2. Katalog Produk: Menampilkan daftar baju beserta gambar dan **jumlah stok saat ini** (`current_stock`).
+3. Pilih & Masuk Keranjang: Pengguna memilih produk dan menentukan jumlah beli, lalu memasukkannya ke keranjang (halaman `CartFrame`).
+4. Checkout (Pembayaran):
+   - Sistem menghitung total belanja.
+   - Menyimpan data utama ke tabel `transactions`.
+   - Menyimpan rincian belanja ke tabel `transaction_details`.
+   - Mengurangi `current_stock` di tabel `products`.
+   - Mencatat aktivitas pengeluaran stok secara otomatis ke `product_logs` (dengan status `SALE`).
+5. Selesai: Keranjang dikosongkan dan aplikasi siap untuk transaksi berikutnya.
+
+### 2. Alur Admin (Manajemen Stok)
+1. Menu Kelola Stok: Pengguna (admin) membuka halaman khusus manajemen barang.
+2. Pilih Barang: Memilih baju yang akan ditambah stoknya (restock).
+3. Input Jumlah: Memasukkan jumlah barang yang masuk dari *supplier*.
+4. Simpan Perubahan: 
+   - Sistem menambahkan jumlah tersebut ke `current_stock` di tabel `products`.
+   - Sistem mencatat histori penambahan ini ke `product_logs`.
 
 
 ## Rancangan Database
