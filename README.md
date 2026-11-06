@@ -68,3 +68,6 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 | `quantity_change` | INT            | Jumlah perubahan (`+` untuk stok masuk, `-` untuk terjual/keluar). |
 | `reference_id`    | INT            | (Opsional) Merujuk ke `transaction_id` jika perubahan karena penjualan. |
 
+##Skema Class
+
+
