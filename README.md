@@ -1,5 +1,12 @@
 # TokoBajuRafiNaKal
 
+## Anggota Kelompok
+| Nama                      | NPM            |
+|---------------------------|----------------|
+| Nala Ahmad Rayyan Saragih | `140810250061` | 
+| Rafi Abdul Hikam          | `140810250064` | 
+| Muhammad Haikal Muzhoffar | `140810250082` | 
+
 ## Deskripsi
 Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi 
 
