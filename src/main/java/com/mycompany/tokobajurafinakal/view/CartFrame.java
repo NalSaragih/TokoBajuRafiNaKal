@@ -11,6 +11,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 /**
  *
  * @author Nala
@@ -29,6 +31,28 @@ public class CartFrame extends javax.swing.JFrame {
     }
 
     private void setupTableButtons() {
+      
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        
+        var colModel = jTable1.getColumnModel();
+        
+        colModel.getColumn(0).setMinWidth(180);
+        colModel.getColumn(0).setPreferredWidth(240);
+        colModel.getColumn(0).setMaxWidth(Integer.MAX_VALUE);
+        colModel.getColumn(1).setMinWidth(90);
+        colModel.getColumn(1).setPreferredWidth(110);
+        colModel.getColumn(2).setMinWidth(65);
+        colModel.getColumn(2).setPreferredWidth(75);
+        colModel.getColumn(2).setMaxWidth(90);
+        colModel.getColumn(3).setMinWidth(100);
+        colModel.getColumn(3).setPreferredWidth(120);
+        colModel.getColumn(4).setMinWidth(45);
+        colModel.getColumn(4).setPreferredWidth(45);
+        colModel.getColumn(4).setMaxWidth(50);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        colModel.getColumn(1).setCellRenderer(centerRenderer);
         jTable1.getColumnModel().getColumn(4).setCellRenderer(new ButtonRenderer());
         jTable1.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
             CartItem item = CartModel.getInstance().getItems().get(row);
@@ -93,6 +117,7 @@ public class CartFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         totalField = new javax.swing.JTextField();
         payBtn = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -122,33 +147,39 @@ public class CartFrame extends javax.swing.JFrame {
         payBtn.setText("Complete Transaction");
         payBtn.addActionListener(this::payBtnActionPerformed);
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel2.setText("Keranjang Belanja");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(86, 86, 86)
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(payBtn)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(payBtn)
+                        .addGap(335, 335, 335)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(97, Short.MAX_VALUE))
+                        .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(payBtn)
-                .addGap(23, 23, 23))
+                    .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(payBtn))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
 
         pack();
@@ -228,6 +259,7 @@ public class CartFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton payBtn;

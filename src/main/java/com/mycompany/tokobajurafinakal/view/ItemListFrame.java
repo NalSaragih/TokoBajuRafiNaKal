@@ -12,6 +12,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -30,8 +32,34 @@ public class ItemListFrame extends javax.swing.JFrame {
         setupTableButtons();
         loadProductsToTable();  
     }
+    
 
     private void setupTableButtons() {
+        
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        
+        var colModel = jTable1.getColumnModel();
+        
+        colModel.getColumn(0).setMinWidth(180);
+        colModel.getColumn(0).setPreferredWidth(240);
+        colModel.getColumn(0).setMaxWidth(Integer.MAX_VALUE);
+        colModel.getColumn(1).setMinWidth(90);
+        colModel.getColumn(1).setPreferredWidth(110);
+        colModel.getColumn(2).setMinWidth(65);
+        colModel.getColumn(2).setPreferredWidth(75);
+        colModel.getColumn(2).setMaxWidth(90);
+        colModel.getColumn(3).setMinWidth(100);
+        colModel.getColumn(3).setPreferredWidth(120);
+        colModel.getColumn(4).setMinWidth(80);
+        colModel.getColumn(4).setPreferredWidth(45);
+        colModel.getColumn(4).setMaxWidth(100);
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        colModel.getColumn(1).setCellRenderer(centerRenderer);
+        colModel.getColumn(4).setCellRenderer(centerRenderer);
+        
         jTable1.getColumn("detail").setCellRenderer(new ButtonRenderer());
         jTable1.getColumn("detail").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
             Product selected = productList.get(row);
