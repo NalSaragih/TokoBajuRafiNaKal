@@ -5,7 +5,7 @@
 package com.mycompany.tokobajurafinakal.entity;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 /**
  *
  * @author Nala
@@ -13,24 +13,26 @@ import java.time.LocalDateTime;
 public class ProductLog {
     private int id;
     private int productId;
-    private LocalDateTime logDate;
+    private LocalDate logDate;
     private int quantityChange;
+    private String logType;
 
     public ProductLog() {
     }
 
-    public ProductLog(int id, int productId, LocalDateTime logDate, int quantityChange) {
+    public ProductLog(int id, int productId, LocalDate logDate, int quantityChange, String logType) {
         this.id = id;
         this.productId = productId;
         this.logDate = logDate;
         this.quantityChange = quantityChange;
+        this.logType = logType;
     }
 
-    // Constructor without ID (useful when recording a new log)
-    public ProductLog(int productId, LocalDateTime logDate, int quantityChange) {
+    public ProductLog(int productId, LocalDate logDate, int quantityChange, String logType) {
         this.productId = productId;
         this.logDate = logDate;
         this.quantityChange = quantityChange;
+        this.logType = logType;
     }
 
     public int getId() {
@@ -49,11 +51,11 @@ public class ProductLog {
         this.productId = productId;
     }
 
-    public LocalDateTime getLogDate() {
+    public LocalDate getLogDate() {
         return logDate;
     }
 
-    public void setLogDate(LocalDateTime logDate) {
+    public void setLogDate(LocalDate logDate) {
         this.logDate = logDate;
     }
 
@@ -63,5 +65,13 @@ public class ProductLog {
 
     public void setQuantityChange(int quantityChange) {
         this.quantityChange = quantityChange;
+    }
+
+    public String getLogType() {
+        return this.logType;
+    }
+
+    public void setLogType(String logType) {
+        this.logType = logType;
     }
 }

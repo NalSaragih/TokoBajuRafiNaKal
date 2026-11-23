@@ -48,6 +48,23 @@ public class InventoryFrame extends javax.swing.JFrame {
             editFrame.setLocationRelativeTo(null);
             editFrame.setVisible(true);
         }));
+        
+        jTable1.getColumn("delete item").setCellRenderer(new ButtonRenderer());
+        jTable1.getColumn("delete item").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            Product selected = productList.get(row);
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to delete \"" + selected.getProductName() + "\"?",
+                "Confirm Delete",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                productRepository.delete(selected);
+                javax.swing.SwingUtilities.invokeLater(this::loadProductsToTable);
+            }
+        }));
 
         jTable1.setRowHeight(35);
     }
@@ -64,7 +81,8 @@ public class InventoryFrame extends javax.swing.JFrame {
                 p.getCurrentStock(),
                 p.getPrice(),   
                 "Detail",      
-                "Edit"          
+                "Edit",
+                "Delete"
             });
         }
     }
@@ -81,6 +99,8 @@ public class InventoryFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         newItemBtn = new javax.swing.JButton();
+        viewLogBtn = new javax.swing.JButton();
+        viewTransactionHistoryBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -89,11 +109,11 @@ public class InventoryFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "name", "stock", "price", "detail", "edit item"
+                "name", "stock", "price", "detail", "edit item", "delete item"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, true
+                false, false, false, true, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -105,6 +125,12 @@ public class InventoryFrame extends javax.swing.JFrame {
         newItemBtn.setText("Add Item");
         newItemBtn.addActionListener(this::newItemBtnActionPerformed);
 
+        viewLogBtn.setText("View Item Logs");
+        viewLogBtn.addActionListener(this::viewLogBtnActionPerformed);
+
+        viewTransactionHistoryBtn.setText("View Transaction History");
+        viewTransactionHistoryBtn.addActionListener(this::viewTransactionHistoryBtnActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -112,7 +138,12 @@ public class InventoryFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(51, 51, 51)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(newItemBtn)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(newItemBtn)
+                        .addGap(85, 85, 85)
+                        .addComponent(viewLogBtn)
+                        .addGap(60, 60, 60)
+                        .addComponent(viewTransactionHistoryBtn))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(60, Short.MAX_VALUE))
         );
@@ -122,7 +153,10 @@ public class InventoryFrame extends javax.swing.JFrame {
                 .addGap(59, 59, 59)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(newItemBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(newItemBtn)
+                    .addComponent(viewLogBtn)
+                    .addComponent(viewTransactionHistoryBtn))
                 .addContainerGap(36, Short.MAX_VALUE))
         );
 
@@ -135,6 +169,20 @@ public class InventoryFrame extends javax.swing.JFrame {
         newItem.setLocationRelativeTo(null);
         newItem.setVisible(true);
     }//GEN-LAST:event_newItemBtnActionPerformed
+
+    private void viewLogBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewLogBtnActionPerformed
+        // TODO add your handling code here:
+        ItemLogFrame itemLogFrame = new ItemLogFrame();
+        itemLogFrame.setLocationRelativeTo(null);
+        itemLogFrame.setVisible(true);
+    }//GEN-LAST:event_viewLogBtnActionPerformed
+
+    private void viewTransactionHistoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewTransactionHistoryBtnActionPerformed
+        // TODO add your handling code here:
+        TransactionHistoryFrame transactionHistoryFrame = new TransactionHistoryFrame();
+        transactionHistoryFrame.setLocationRelativeTo(null);
+        transactionHistoryFrame.setVisible(true);
+    }//GEN-LAST:event_viewTransactionHistoryBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -165,5 +213,7 @@ public class InventoryFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton newItemBtn;
+    private javax.swing.JButton viewLogBtn;
+    private javax.swing.JButton viewTransactionHistoryBtn;
     // End of variables declaration//GEN-END:variables
 }

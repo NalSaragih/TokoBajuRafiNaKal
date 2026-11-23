@@ -5,7 +5,10 @@ D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokoba
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\model\CartItem.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\model\CartModel.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\model\ProductListModel.java
+D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\model\ProductLogModel.java
+D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\model\TransactionHistoryModel.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\repository\DatabaseUtil.java
+D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\repository\LogRepository.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\repository\ProductRepository.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\repository\TransactionRepository.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\TokoBajuRafiNaKal.java
@@ -18,3 +21,4 @@ D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokoba
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\view\ItemListFrame.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\view\ItemLogFrame.java
 D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\view\NewItem.java
+D:\InforEngi\Sem_3\Prak_PBO\TokoBajuRafiNaKal\src\main\java\com\mycompany\tokobajurafinakal\view\TransactionHistoryFrame.java

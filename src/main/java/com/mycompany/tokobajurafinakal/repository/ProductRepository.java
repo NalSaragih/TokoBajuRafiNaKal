@@ -7,6 +7,7 @@ import com.mycompany.tokobajurafinakal.entity.Product;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -42,9 +43,12 @@ public class ProductRepository {
     
     public void insert(Product product){
         String query = "INSERT INTO products(product_name, price, product_image, current_stock, product_desc) VALUES(?, ?, ?, ?, ?)";
+        String logSql = "INSERT INTO product_logs (product_id, log_date, quantity_change, log_type) VALUES (?, CURDATE(), ?, 'INITIAL')";
+        int newProductId = -1;
         try (
                 Connection conn = DatabaseUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query);
+                PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement logStmt = conn.prepareStatement(logSql)
             ){
             stmt.setString(1, product.getProductName());
             stmt.setDouble(2, product.getPrice());
@@ -52,19 +56,46 @@ public class ProductRepository {
             stmt.setInt(4, product.getCurrentStock());
             stmt.setString(5, product.getProductDesc());
             stmt.executeUpdate();
+            
+            try (ResultSet keys = stmt.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        newProductId = keys.getInt(1);
+                    }
+                }
+        
+
+            if (newProductId != -1 && product.getCurrentStock() > 0) {
+                logStmt.setInt(1, newProductId);
+                logStmt.setInt(2, product.getCurrentStock());
+                logStmt.executeUpdate();
+            }
         }
         catch(SQLException e){
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Insert Error: " + e.getMessage());
         }
     }
     
     public void update(Product product){
+        String getOldStockSql = "SELECT current_stock FROM products WHERE product_id = ?";
         String query = "UPDATE products SET product_name = ?, price = ?, product_image = ?, current_stock = ?, product_desc = ?"
                 + " WHERE product_id = ?";
+        String logSql = "INSERT INTO product_logs (product_id, log_date, quantity_change, log_type) VALUES (?, CURDATE(), ?, 'ADMIN')";
+        
         try (
                 Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query);
+                PreparedStatement checkStmt = conn.prepareStatement(getOldStockSql);
             ){
+            int oldStock = 0;
+            checkStmt.setInt(1, product.getId());
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next()) {
+                    oldStock = rs.getInt("current_stock");
+                }
+            } 
+            
+            
             stmt.setString(1, product.getProductName());
             stmt.setDouble(2, product.getPrice());
             stmt.setBytes(3, product.getProductImage());
@@ -72,10 +103,46 @@ public class ProductRepository {
             stmt.setString(5, product.getProductDesc());
             stmt.setInt(6, product.getId());
             stmt.executeUpdate();
+            
+            int diff = product.getCurrentStock() - oldStock;
+            if (diff != 0) {
+                try (PreparedStatement logStmt = conn.prepareStatement(logSql)) {
+                    logStmt.setInt(1, product.getId());
+                    logStmt.setInt(2, diff);
+                    logStmt.executeUpdate();
+                }
+            }
         }
         catch(SQLException e){
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage());
+        }
+    }
+    
+    public void delete(Product product) {
+        String logSql = "INSERT INTO product_logs (product_id, log_date, quantity_change, log_type) VALUES (?, CURDATE(), ?, 'DELETED')";
+        String deleteSql = "DELETE FROM products WHERE product_id = ?";
+
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement logStmt = conn.prepareStatement(logSql);
+                 PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+
+                // 1. Log the deletion and remaining stock removal
+                logStmt.setInt(1, product.getId());
+                logStmt.setInt(2, -product.getCurrentStock());
+                logStmt.executeUpdate();
+
+                // 2. Delete product (ON DELETE SET NULL will nullify product_id in logs)
+                deleteStmt.setInt(1, product.getId());
+                deleteStmt.executeUpdate();
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Delete Error: " + e.getMessage());
         }
     }
 }

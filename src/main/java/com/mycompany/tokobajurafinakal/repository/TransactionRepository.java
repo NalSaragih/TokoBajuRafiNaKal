@@ -4,6 +4,7 @@
  */
 package com.mycompany.tokobajurafinakal.repository;
 import com.mycompany.tokobajurafinakal.model.CartItem;
+import com.mycompany.tokobajurafinakal.model.TransactionHistoryModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
@@ -97,5 +98,41 @@ public class TransactionRepository {
                 }
             }
         }
+    }
+    
+    public List<TransactionHistoryModel> getTransactionHistory() {
+        List<TransactionHistoryModel> history = new ArrayList<>();
+        String query = "SELECT t.transaction_id, p.product_name, td.quantity, td.subtotal, t.total, t.paid "
+                     + "FROM transactions t "
+                     + "JOIN transaction_details td ON t.transaction_id = td.transaction_id "
+                     + "LEFT JOIN products p ON td.product_id = p.product_id "
+                     + "ORDER BY t.transaction_id DESC";
+
+        try (
+            Connection conn = DatabaseUtil.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+        ) {
+            while (rs.next()) {
+                String itemName = rs.getString("product_name");
+                if (itemName == null) {
+                    itemName = "Deleted Product";
+                }
+
+                history.add(new TransactionHistoryModel(
+                    rs.getInt("transaction_id"),
+                    itemName,
+                    rs.getInt("quantity"),
+                    rs.getDouble("subtotal"),
+                    rs.getDouble("total"),
+                    rs.getDouble("paid")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage());
+        }
+
+        return history;
     }
 }

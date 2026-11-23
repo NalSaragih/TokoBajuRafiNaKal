@@ -4,6 +4,12 @@
  */
 package com.mycompany.tokobajurafinakal.view;
 
+import com.mycompany.tokobajurafinakal.model.ProductLogModel;
+import com.mycompany.tokobajurafinakal.repository.LogRepository;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Nala
@@ -11,14 +17,37 @@ package com.mycompany.tokobajurafinakal.view;
 public class ItemLogFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemLogFrame.class.getName());
-
+    private final LogRepository logRepository = new LogRepository();
+    private List<ProductLogModel> logs = new ArrayList<>();
+    
     /**
      * Creates new form ItemLogFrame
      */
     public ItemLogFrame() {
         initComponents();
+        loadLogsToTable();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
+    
+    private void loadLogsToTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        
+        logs = logRepository.getAllProductLogs();
+        for (ProductLogModel log : logs) {
+            String dateStr = (log.getLogDate() != null) ? log.getLogDate().toString() : "-";
+            String qtyStr = (log.getQuantityChange() > 0) ? "+" + log.getQuantityChange() : String.valueOf(log.getQuantityChange());
 
+            model.addRow(new Object[]{
+                log.getId(),
+                log.getProductName(),
+                dateStr,
+                qtyStr,
+                log.getLogType()
+            });
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -36,15 +65,23 @@ public class ItemLogFrame extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "product id", "date", "quantity", "reference"
+                "product id", "name", "date", "quantity", "type"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jLabel1.setText("Product Log");
