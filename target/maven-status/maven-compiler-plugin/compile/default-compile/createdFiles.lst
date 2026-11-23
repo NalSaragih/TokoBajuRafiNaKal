@@ -1,6 +1,7 @@
 com\mycompany\tokobajurafinakal\view\NewItem.class
 com\mycompany\tokobajurafinakal\view\CartFrame$1.class
 com\mycompany\tokobajurafinakal\repository\DatabaseUtil.class
+com\mycompany\tokobajurafinakal\view\InventoryFrame$1.class
 com\mycompany\tokobajurafinakal\view\ButtonRenderer.class
 com\mycompany\tokobajurafinakal\view\ItemLogFrame.class
 com\mycompany\tokobajurafinakal\repository\TransactionRepository.class

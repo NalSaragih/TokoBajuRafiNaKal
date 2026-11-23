@@ -57,4 +57,25 @@ public class ProductRepository {
             e.printStackTrace();
         }
     }
+    
+    public void update(Product product){
+        String query = "UPDATE products SET product_name = ?, price = ?, product_image = ?, current_stock = ?, product_desc = ?"
+                + " WHERE product_id = ?";
+        try (
+                Connection conn = DatabaseUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+            ){
+            stmt.setString(1, product.getProductName());
+            stmt.setDouble(2, product.getPrice());
+            stmt.setBytes(3, product.getProductImage());
+            stmt.setInt(4, product.getCurrentStock());
+            stmt.setString(5, product.getProductDesc());
+            stmt.setInt(6, product.getId());
+            stmt.executeUpdate();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage());
+        }
+    }
 }
