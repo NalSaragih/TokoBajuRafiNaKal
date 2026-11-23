@@ -27,7 +27,8 @@ public class ProductRepository {
                                             rs.getString("product_name"), 
                                             rs.getDouble("price"), 
                                             rs.getBytes("product_image"),
-                                            rs.getInt("current_stock"));
+                                            rs.getInt("current_stock"),
+                                            rs.getString("product_desc"));
                     products.add(p);
                 }
             }
@@ -40,7 +41,7 @@ public class ProductRepository {
     }
     
     public void insert(Product product){
-        String query = "INSERT INTO products(product_name, price, product_image, current_stock) VALUES(?, ?, ?, ?)";
+        String query = "INSERT INTO products(product_name, price, product_image, current_stock, product_desc) VALUES(?, ?, ?, ?, ?)";
         try (
                 Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query);
@@ -49,6 +50,7 @@ public class ProductRepository {
             stmt.setDouble(2, product.getPrice());
             stmt.setBytes(3, product.getProductImage());
             stmt.setInt(4, product.getCurrentStock());
+            stmt.setString(5, product.getProductDesc());
             stmt.executeUpdate();
         }
         catch(SQLException e){

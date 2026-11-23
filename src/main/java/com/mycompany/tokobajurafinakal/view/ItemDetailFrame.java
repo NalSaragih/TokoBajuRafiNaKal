@@ -33,6 +33,7 @@ public class ItemDetailFrame extends javax.swing.JFrame {
         idLabel.setText("ID: " + product.getId());
         nameLabel.setText("Name: " + product.getProductName());
         stockLabel.setText("Stock: " + product.getCurrentStock());
+        descTextArea.setText(product.getProductDesc());
 
         if (product.getProductImage() != null) {
             ImageIcon icon = new ImageIcon(product.getProductImage());
@@ -57,6 +58,8 @@ public class ItemDetailFrame extends javax.swing.JFrame {
         idLabel = new javax.swing.JLabel();
         stockLabel = new javax.swing.JLabel();
         imgLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        descTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,6 +70,11 @@ public class ItemDetailFrame extends javax.swing.JFrame {
         stockLabel.setText("Stock");
 
         imgLabel.setText("pic here");
+
+        descTextArea.setEditable(false);
+        descTextArea.setColumns(20);
+        descTextArea.setRows(5);
+        jScrollPane1.setViewportView(descTextArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,23 +87,24 @@ public class ItemDetailFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(idLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stockLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(71, Short.MAX_VALUE))
+                    .addComponent(stockLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(52, 52, 52)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(67, 67, 67)
                         .addComponent(idLabel)
                         .addGap(18, 18, 18)
                         .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stockLabel))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
-                        .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(stockLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(60, Short.MAX_VALUE))
         );
 
@@ -128,8 +137,10 @@ public class ItemDetailFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea descTextArea;
     private javax.swing.JLabel idLabel;
     private javax.swing.JLabel imgLabel;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel stockLabel;
     // End of variables declaration//GEN-END:variables
