@@ -3,6 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
+import com.mycompany.tokobajurafinakal.entity.Product;
+import com.mycompany.tokobajurafinakal.model.CartModel;
+import com.mycompany.tokobajurafinakal.repository.ProductRepository;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -10,13 +20,53 @@ package com.mycompany.tokobajurafinakal.view;
  */
 public class InventoryFrame extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InventoryFrame.class.getName());
-
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemListFrame.class.getName());
+    private List<Product> productList = new ArrayList<>();
+    private final ProductRepository productRepository = new ProductRepository();
     /**
-     * Creates new form InventoryFrame
+     * Creates new form ItemListFrame
      */
     public InventoryFrame() {
         initComponents();
+        setupTableButtons();
+        loadProductsToTable();  
+    }
+
+    private void setupTableButtons() {
+        jTable1.getColumn("detail").setCellRenderer(new ButtonRenderer());
+        jTable1.getColumn("detail").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            Product selected = productList.get(row);
+            ItemDetailFrame detailFrame = new ItemDetailFrame(selected);
+            detailFrame.setLocationRelativeTo(null);
+            detailFrame.setVisible(true);
+        }));
+
+        jTable1.getColumn("edit item").setCellRenderer(new ButtonRenderer());
+        jTable1.getColumn("edit item").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            Product selected = productList.get(row);
+            EditItemFrame editFrame = new EditItemFrame(selected, this);
+            editFrame.setLocationRelativeTo(null);
+            editFrame.setVisible(true);
+        }));
+
+        jTable1.setRowHeight(35);
+    }
+
+    public void loadProductsToTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        
+        productList = productRepository.getAllProducts();
+        
+        for (Product p : productList) {
+            model.addRow(new Object[]{
+                p.getProductName(), 
+                p.getCurrentStock(),
+                p.getPrice(),   
+                "Detail",      
+                "Edit"          
+            });
+        }
     }
 
     /**
@@ -28,17 +78,44 @@ public class InventoryFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "name", "stock", "price", "detail", "edit item"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 697, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(51, 51, 51)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 464, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(59, 59, 59)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         pack();
@@ -70,5 +147,7 @@ public class InventoryFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

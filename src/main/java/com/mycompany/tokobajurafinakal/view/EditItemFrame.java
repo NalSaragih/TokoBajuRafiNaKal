@@ -3,12 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
+import com.mycompany.tokobajurafinakal.entity.Product;
+import com.mycompany.tokobajurafinakal.repository.ProductRepository;
+import java.awt.Image;
+import java.io.File;
+import java.nio.file.Files;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author Nala
  */
 public class EditItemFrame extends javax.swing.JFrame {
+    private Product currentProduct;
+    private InventoryFrame parentFrame;
+    private byte[] selectedImageBytes = null;
+    private final ProductRepository productRepository = new ProductRepository();
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditItemFrame.class.getName());
 
@@ -17,6 +30,33 @@ public class EditItemFrame extends javax.swing.JFrame {
      */
     public EditItemFrame() {
         initComponents();
+    }
+
+    public EditItemFrame(Product product, InventoryFrame parentFrame) {
+        initComponents();
+        this.currentProduct = product;
+        this.parentFrame = parentFrame;
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        loadProduct(product);
+    }
+    
+    private void loadProduct(Product product) {
+        productNameField.setText(product.getProductName());
+        productStockField.setText(String.valueOf(product.getCurrentStock())); // Pure number, no "Stock: " text
+        productPriceField.setText(String.valueOf(product.getPrice()));        // Added missing price load
+        descTextArea.setText(product.getProductDesc());
+        
+        // Keep existing image bytes unless the user picks a new file
+        this.selectedImageBytes = product.getProductImage();
+
+        if (product.getProductImage() != null) {
+            ImageIcon icon = new ImageIcon(product.getProductImage());
+            Image scaled = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            lblImagePreview.setIcon(new ImageIcon(scaled));
+            lblImagePreview.setText("");
+        } else {
+            lblImagePreview.setText("No Image Available");
+        }
     }
 
     /**
@@ -28,21 +68,198 @@ public class EditItemFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        productStockField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        ChooseImageBtn = new javax.swing.JButton();
+        lblImagePreview = new javax.swing.JLabel();
+        txtImagePath = new javax.swing.JTextField();
+        saveButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        productNameField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        descTextArea = new javax.swing.JTextArea();
+        productPriceField = new javax.swing.JTextField();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        productStockField.addActionListener(this::productStockFieldActionPerformed);
+
+        jLabel4.setText("Desc");
+
+        ChooseImageBtn.setText("jButton1");
+        ChooseImageBtn.addActionListener(this::ChooseImageBtnActionPerformed);
+
+        lblImagePreview.setText("jLabel4");
+
+        txtImagePath.setText("jTextField4");
+
+        saveButton.setText("save");
+        saveButton.addActionListener(this::saveButtonActionPerformed);
+
+        jLabel1.setText("Name");
+
+        productNameField.addActionListener(this::productNameFieldActionPerformed);
+
+        jLabel2.setText("Stock");
+
+        jLabel3.setText("Price");
+
+        descTextArea.setColumns(20);
+        descTextArea.setRows(5);
+        jScrollPane1.setViewportView(descTextArea);
+
+        productPriceField.addActionListener(this::productPriceFieldActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 722, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblImagePreview, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(txtImagePath, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addComponent(ChooseImageBtn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(91, 91, 91)
+                                .addComponent(saveButton)))
+                        .addContainerGap(351, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(productStockField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(productPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)
+                                .addComponent(productNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(49, 49, 49))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 536, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(productNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(productStockField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(productPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(lblImagePreview, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtImagePath, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(89, 89, 89)
+                                .addComponent(ChooseImageBtn)
+                                .addGap(70, 70, 70)
+                                .addComponent(saveButton))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(166, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void productStockFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productStockFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_productStockFieldActionPerformed
+
+    private void ChooseImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChooseImageBtnActionPerformed
+        // TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser();
+
+        // Restrict file picker to images only
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Images (JPG, PNG)", "jpg", "jpeg", "png");
+        chooser.setFileFilter(filter);
+
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            try {
+                // Convert the file directly to byte[] for your Product entity
+                selectedImageBytes = Files.readAllBytes(file.toPath());
+
+                // Optional: show file name in JTextField
+                txtImagePath.setText(file.getName());
+
+                // Show scaled preview in lblImagePreview
+                ImageIcon icon = new ImageIcon(selectedImageBytes);
+                Image scaled = icon.getImage().getScaledInstance(
+                    lblImagePreview.getWidth(),
+                    lblImagePreview.getHeight(),
+                    Image.SCALE_SMOOTH
+                );
+                lblImagePreview.setIcon(new ImageIcon(scaled));
+                lblImagePreview.setText(""); // Clear placeholder text
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_ChooseImageBtnActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            String name = productNameField.getText().trim();
+            double price = Double.parseDouble(productPriceField.getText().trim());
+            int stock = Integer.parseInt(productStockField.getText().trim());
+            String productDesc = descTextArea.getText();
+
+            currentProduct.setProductName(name);
+            currentProduct.setPrice(price);
+            currentProduct.setCurrentStock(stock);
+            currentProduct.setProductDesc(productDesc);
+            currentProduct.setProductImage(selectedImageBytes);
+
+            productRepository.update(currentProduct);
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Product updated successfully!");
+            if (parentFrame != null) {
+                parentFrame.loadProductsToTable(); 
+            }
+            this.dispose();
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Price and Stock must be valid numbers.");
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void productNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productNameFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_productNameFieldActionPerformed
+
+    private void productPriceFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productPriceFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_productPriceFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +287,18 @@ public class EditItemFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ChooseImageBtn;
+    private javax.swing.JTextArea descTextArea;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblImagePreview;
+    private javax.swing.JTextField productNameField;
+    private javax.swing.JTextField productPriceField;
+    private javax.swing.JTextField productStockField;
+    private javax.swing.JButton saveButton;
+    private javax.swing.JTextField txtImagePath;
     // End of variables declaration//GEN-END:variables
 }
