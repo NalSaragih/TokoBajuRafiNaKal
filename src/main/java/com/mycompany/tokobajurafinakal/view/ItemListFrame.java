@@ -3,6 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
+import com.mycompany.tokobajurafinakal.entity.Product;
+import com.mycompany.tokobajurafinakal.model.CartModel;
+import com.mycompany.tokobajurafinakal.repository.ProductRepository;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -11,14 +20,56 @@ package com.mycompany.tokobajurafinakal.view;
 public class ItemListFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemListFrame.class.getName());
-
+    private List<Product> productList = new ArrayList<>();
+    private final ProductRepository productRepository = new ProductRepository();
     /**
      * Creates new form ItemListFrame
      */
     public ItemListFrame() {
         initComponents();
+        setupTableButtons();
+        loadProductsToTable();  
     }
 
+    private void setupTableButtons() {
+        jTable1.getColumn("detail").setCellRenderer(new ButtonRenderer());
+        jTable1.getColumn("detail").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            Product selected = productList.get(row);
+            
+            JOptionPane.showMessageDialog(this, "Detail for: " + selected.getProductName());
+        }));
+
+        jTable1.getColumn("add to cart").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            Product selected = productList.get(row);
+            boolean added = CartModel.getInstance().addItem(selected, 1);
+
+            if (added) {
+                JOptionPane.showMessageDialog(this, "Added to cart: " + selected.getProductName());
+            } else {
+                JOptionPane.showMessageDialog(this, "Cannot add more. Insufficient stock!");
+            }
+        }));
+
+        jTable1.setRowHeight(35);
+    }
+    
+    private void loadProductsToTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        
+        productList = productRepository.getAllProducts();
+        
+        for (Product p:productList) {
+            model.addRow(new Object[]{
+                p.getProductName(), 
+                p.getCurrentStock(),
+                p.getPrice(),   
+                "Detail",      
+                "+ Cart"          
+            });
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +79,66 @@ public class ItemListFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        cartBtn = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "name", "stock", "price", "detail", "add to cart"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        cartBtn.setText("Cart");
+        cartBtn.addActionListener(this::cartBtnActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 724, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(61, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(cartBtn)
+                .addGap(133, 133, 133))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 543, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(cartBtn)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cartBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartBtnActionPerformed
+        // TODO add your handling code here:
+        JFrame cartFrame = new CartFrame();
+        cartFrame.setLocationRelativeTo(null);
+        cartFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_cartBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +166,8 @@ public class ItemListFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cartBtn;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

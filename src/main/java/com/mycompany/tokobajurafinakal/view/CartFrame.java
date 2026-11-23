@@ -3,7 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
-
+import com.mycompany.tokobajurafinakal.model.CartItem;
+import com.mycompany.tokobajurafinakal.model.CartModel;
+import com.mycompany.tokobajurafinakal.repository.TransactionRepository;
+import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Nala
@@ -17,8 +24,60 @@ public class CartFrame extends javax.swing.JFrame {
      */
     public CartFrame() {
         initComponents();
+        setupTableButtons();
+        loadCartToTable();
     }
 
+    private void setupTableButtons() {
+        jTable1.getColumnModel().getColumn(4).setCellRenderer(new ButtonRenderer());
+        jTable1.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            CartItem item = CartModel.getInstance().getItems().get(row);
+            int productId = item.getProduct().getId();
+            int newQty = item.getQuantity() + 1;
+
+            boolean updated = CartModel.getInstance().updateQuantity(productId, newQty);
+            if (!updated) {
+                JOptionPane.showMessageDialog(this, 
+                    "Insufficient stock! Max available: " + item.getProduct().getCurrentStock());
+            } else {
+                SwingUtilities.invokeLater(this::loadCartToTable);
+            }
+        }));
+        jTable1.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
+        jTable1.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            CartItem item = CartModel.getInstance().getItems().get(row);
+            int productId = item.getProduct().getId();
+            int newQty = item.getQuantity() - 1;
+
+            CartModel.getInstance().updateQuantity(productId, newQty);
+            SwingUtilities.invokeLater(this::loadCartToTable);
+        }));
+
+        jTable1.setRowHeight(35);
+
+        jTable1.getColumnModel().getColumn(4).setMaxWidth(50);
+        jTable1.getColumnModel().getColumn(5).setMaxWidth(50);
+    }
+    
+    private void loadCartToTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+        List<CartItem> items = CartModel.getInstance().getItems();
+        for (CartItem item : items) {
+            model.addRow(new Object[]{
+                item.getProduct().getProductName(), // Column 0: Name
+                item.getProduct().getPrice(),       // Column 1: Price
+                item.getQuantity(),                 // Column 2: Quantity
+                item.getSubtotal(),                 // Column 3: Subtotal
+                "+",                                // Column 4: + button
+                "-"                                 // Column 5: - button
+            });
+        }
+
+        totalField.setText("Rp " + CartModel.getInstance().getTotalAmount());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,41 +90,127 @@ public class CartFrame extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        totalField = new javax.swing.JTextField();
+        payBtn = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "Picture", "Item Name", "Quantity"
+                "Item Name", "Quantity", "Price", "Subtotal", "+", "_"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
+
+        jLabel1.setText("Total:");
+
+        totalField.setEditable(false);
+        totalField.addActionListener(this::totalFieldActionPerformed);
+
+        payBtn.setText("Pay");
+        payBtn.addActionListener(this::payBtnActionPerformed);
+
+        jLabel2.setText("Paid:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 665, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGap(86, 86, 86)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(payBtn)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+                            .addComponent(totalField))))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(93, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
+                .addComponent(payBtn)
                 .addGap(23, 23, 23))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void totalFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalFieldActionPerformed
+
+    private void payBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payBtnActionPerformed
+        // TODO add your handling code here:
+        CartModel cart = CartModel.getInstance();
+
+        if (cart.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Your cart is empty!");
+            return;
+        }
+
+        double total = cart.getTotalAmount();
+        String input = JOptionPane.showInputDialog(this, "Total: Rp " + total + "\nEnter amount paid:");
+
+        if (input == null) {
+            return;
+        }
+
+        try {
+            double paid = Double.parseDouble(input);
+
+            if (paid < total) {
+                JOptionPane.showMessageDialog(this, "Insufficient payment! Amount paid must be at least Rp " + total);
+                return;
+            }
+
+            TransactionRepository repo = new TransactionRepository();
+            boolean success = repo.checkout(cart.getItems(), total, paid);
+
+            if (success) {
+                double change = paid - total;
+                JOptionPane.showMessageDialog(this, "Payment successful!\nChange: Rp " + change);
+                cart.clear();
+
+                ItemListFrame itemList = new ItemListFrame();
+                itemList.setLocationRelativeTo(null);
+                itemList.setVisible(true);
+                this.dispose();
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for payment.");
+        }
+    }//GEN-LAST:event_payBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -94,7 +239,12 @@ public class CartFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton payBtn;
+    private javax.swing.JTextField totalField;
     // End of variables declaration//GEN-END:variables
 }

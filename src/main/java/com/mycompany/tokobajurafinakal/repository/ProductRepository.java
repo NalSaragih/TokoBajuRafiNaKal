@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.repository;
-import com.mycompany.tokobajurafinakal.repository;
+import com.mycompany.tokobajurafinakal.entity.Product;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
@@ -23,29 +23,32 @@ public class ProductRepository {
                 ResultSet rs = stmt.executeQuery(query);
             ){
                 while(rs.next()){
-                    Product p = new Product(rs.getInt("id"), 
-                                            rs.getString("name"), 
-                                            rs.getInt("price"), 
-                                            rs.getInt("stock"));
+                    Product p = new Product(rs.getInt("product_id"), 
+                                            rs.getString("product_name"), 
+                                            rs.getDouble("price"), 
+                                            rs.getBytes("product_image"),
+                                            rs.getInt("current_stock"));
                     products.add(p);
                 }
             }
             catch(SQLException e){
                 e.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage());
             }
         
         return products;
     }
     
     public void insert(Product product){
-        String query = "INSERT INTO products(name, price, stock) VALUES(?, ?, ?)";
+        String query = "INSERT INTO products(product_name, price, product_image, current_stock) VALUES(?, ?, ?, ?)";
         try (
                 Connection conn = DatabaseUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query);
             ){
-            stmt.setString(1, product.getName());
+            stmt.setString(1, product.getProductName());
             stmt.setDouble(2, product.getPrice());
-            stmt.setInt(3, product.getStock());
+            stmt.setBytes(3, product.getProductImage());
+            stmt.setInt(4, product.getCurrentStock());
             stmt.executeUpdate();
         }
         catch(SQLException e){

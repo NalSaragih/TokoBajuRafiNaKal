@@ -4,6 +4,8 @@
  */
 package com.mycompany.tokobajurafinakal.entity;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Nala
@@ -13,21 +15,24 @@ public class Transaction {
     private LocalDateTime transactionDate;
     private String customerName;
     private double totalAmount;
+    private double paid;
 
     public Transaction() {
     }
 
-    public Transaction(int id, LocalDateTime transactionDate, String customerName, double totalAmount) {
+    public Transaction(int id, LocalDateTime transactionDate, String customerName, double totalAmount, double paid) {
         this.id = id;
         this.transactionDate = transactionDate;
         this.customerName = customerName;
         this.totalAmount = totalAmount;
+        this.paid = paid;
     }
 
-    public Transaction(LocalDateTime transactionDate, String customerName, double totalAmount) {
+    public Transaction(LocalDateTime transactionDate, String customerName, double totalAmount, double paid) {
         this.transactionDate = transactionDate;
         this.customerName = customerName;
         this.totalAmount = totalAmount;
+        this.paid = paid;
     }
 
     public int getId() {
@@ -60,5 +65,13 @@ public class Transaction {
 
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public double getPaid() {
+        return this.paid;
+    }
+
+    public void setPaid(double paid) {
+        this.paid = paid;
     }
 }

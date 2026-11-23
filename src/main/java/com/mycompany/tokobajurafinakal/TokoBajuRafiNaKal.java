@@ -6,7 +6,8 @@
 package com.mycompany.tokobajurafinakal;
 
 import com.formdev.flatlaf.FlatDarkLaf; 
-import com.mycompany.tokobajurafinakal.view.CartFrame;
+import com.mycompany.tokobajurafinakal.view.ItemListFrame;
+import com.mycompany.tokobajurafinakal.view.NewItem;
 import javax.swing.UIManager;
 
 /**
@@ -24,7 +25,7 @@ public class TokoBajuRafiNaKal {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CartFrame().setVisible(true); // Replace CartFrame with your main frame name
+                new ItemListFrame().setVisible(true); 
             }
         });
     }
