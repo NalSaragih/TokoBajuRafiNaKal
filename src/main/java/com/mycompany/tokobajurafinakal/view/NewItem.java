@@ -21,12 +21,19 @@ public class NewItem extends javax.swing.JFrame {
     private final ProductRepository productRepository = new ProductRepository();
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NewItem.class.getName());
+    private InventoryFrame parentFrame;
 
     /**
      * Creates new form NewItem
      */
     public NewItem() {
         initComponents();
+    }
+    
+    public NewItem(InventoryFrame parentFrame) {
+        initComponents();
+        this.parentFrame = parentFrame;
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -66,7 +73,7 @@ public class NewItem extends javax.swing.JFrame {
 
         productStockField.addActionListener(this::productStockFieldActionPerformed);
 
-        ChooseImageBtn.setText("jButton1");
+        ChooseImageBtn.setText("Select Image");
         ChooseImageBtn.addActionListener(this::ChooseImageBtnActionPerformed);
 
         lblImagePreview.setText("jLabel4");
@@ -218,6 +225,11 @@ public class NewItem extends javax.swing.JFrame {
             productRepository.insert(product);
 
             javax.swing.JOptionPane.showMessageDialog(this, "Product added successfully!");
+            
+            if (parentFrame != null) {
+                parentFrame.loadProductsToTable(); 
+            }
+            this.dispose();
         } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Price and Stock must be valid numbers.");
         }
