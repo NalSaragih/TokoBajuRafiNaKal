@@ -15,6 +15,7 @@ public class Product {
     private double price;
     private byte[] productImage; // BLOB
     private int currentStock;
+    private String description;
 
     // Constructor, Getters, and Setters only
 

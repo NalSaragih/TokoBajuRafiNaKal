@@ -36,7 +36,9 @@ public class ItemListFrame extends javax.swing.JFrame {
         jTable1.getColumn("detail").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
             Product selected = productList.get(row);
             
-            JOptionPane.showMessageDialog(this, "Detail for: " + selected.getProductName());
+            ItemDetailFrame detailFrame = new ItemDetailFrame(selected);
+            detailFrame.setLocationRelativeTo(null); // Center on screen
+            detailFrame.setVisible(true);
         }));
 
         jTable1.getColumn("add to cart").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
