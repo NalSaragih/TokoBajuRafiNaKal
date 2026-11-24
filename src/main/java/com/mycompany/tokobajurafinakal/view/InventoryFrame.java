@@ -28,6 +28,7 @@ public class InventoryFrame extends javax.swing.JFrame {
      */
     public InventoryFrame() {
         initComponents();
+        setJMenuBar(new NavBar(this));
         setupTableButtons();
         loadProductsToTable();  
     }
@@ -101,6 +102,7 @@ public class InventoryFrame extends javax.swing.JFrame {
         newItemBtn = new javax.swing.JButton();
         viewLogBtn = new javax.swing.JButton();
         viewTransactionHistoryBtn = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -131,6 +133,9 @@ public class InventoryFrame extends javax.swing.JFrame {
         viewTransactionHistoryBtn.setText("View Transaction History");
         viewTransactionHistoryBtn.addActionListener(this::viewTransactionHistoryBtnActionPerformed);
 
+        jButton1.setText("Kembali");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -138,6 +143,7 @@ public class InventoryFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(51, 51, 51)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(newItemBtn)
                         .addGap(85, 85, 85)
@@ -150,7 +156,9 @@ public class InventoryFrame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -184,6 +192,14 @@ public class InventoryFrame extends javax.swing.JFrame {
         transactionHistoryFrame.setVisible(true);
     }//GEN-LAST:event_viewTransactionHistoryBtnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        HomeFrame home = new HomeFrame();
+        home.setLocationRelativeTo(null);
+        home.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -210,6 +226,7 @@ public class InventoryFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton newItemBtn;

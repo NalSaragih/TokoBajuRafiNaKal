@@ -9,6 +9,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.mycompany.tokobajurafinakal.view.InventoryFrame;
 import com.mycompany.tokobajurafinakal.view.ItemListFrame;
 import com.mycompany.tokobajurafinakal.view.NewItem;
+import com.mycompany.tokobajurafinakal.view.HomeFrame;
 import javax.swing.UIManager;
 
 /**
@@ -26,7 +27,7 @@ public class TokoBajuRafiNaKal {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new InventoryFrame().setVisible(true); 
+                new HomeFrame().setVisible(true);
             }
         });
     }
