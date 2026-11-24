@@ -180,16 +180,18 @@ public class InventoryFrame extends javax.swing.JFrame {
 
     private void viewLogBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewLogBtnActionPerformed
         // TODO add your handling code here:
-        ItemLogFrame itemLogFrame = new ItemLogFrame();
-        itemLogFrame.setLocationRelativeTo(null);
-        itemLogFrame.setVisible(true);
+        ItemLogFrame logFrame = new ItemLogFrame();
+        logFrame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+        logFrame.setLocationRelativeTo(this); // Muncul di tengah InventoryFrame
+        logFrame.setVisible(true);
     }//GEN-LAST:event_viewLogBtnActionPerformed
 
     private void viewTransactionHistoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewTransactionHistoryBtnActionPerformed
         // TODO add your handling code here:
-        TransactionHistoryFrame transactionHistoryFrame = new TransactionHistoryFrame();
-        transactionHistoryFrame.setLocationRelativeTo(null);
-        transactionHistoryFrame.setVisible(true);
+        TransactionHistoryFrame historyFrame = new TransactionHistoryFrame();
+        historyFrame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+        historyFrame.setLocationRelativeTo(this); // Muncul di tengah ItemListFrame
+        historyFrame.setVisible(true);
     }//GEN-LAST:event_viewTransactionHistoryBtnActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

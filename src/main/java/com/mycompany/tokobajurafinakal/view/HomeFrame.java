@@ -41,23 +41,18 @@ public class HomeFrame extends JFrame {
         headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
         add(headerPanel, BorderLayout.NORTH);
 
-        JPanel menuPanel = new JPanel(new GridLayout(2, 2, 15, 15));
-        menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
+        
+        JPanel menuPanel = new JPanel(new GridLayout(1, 2, 20, 20));
+        menuPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        JButton btnShop = buatTombolMenu("Daftar Produk (Shop)");
+        JButton btnTransaksi = buatTombolMenu("Mulai Transaksi");
         JButton btnInventory = buatTombolMenu("Kelola Inventory");
-        JButton btnCart = buatTombolMenu("Keranjang (Cart)");
-        JButton btnLog = buatTombolMenu("Log Produk");
 
-        btnShop.addActionListener(e -> pindahHalaman(new ItemListFrame()));
+        btnTransaksi.addActionListener(e -> pindahHalaman(new ItemListFrame()));
         btnInventory.addActionListener(e -> pindahHalaman(new InventoryFrame()));
-        btnCart.addActionListener(e -> pindahHalaman(new CartFrame()));
-        btnLog.addActionListener(e -> pindahHalaman(new ItemLogFrame()));
 
-        menuPanel.add(btnShop);
+        menuPanel.add(btnTransaksi);
         menuPanel.add(btnInventory);
-        menuPanel.add(btnCart);
-        menuPanel.add(btnLog);
         add(menuPanel, BorderLayout.CENTER);
 
         JPanel footerPanel = new JPanel();

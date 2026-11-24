@@ -17,33 +17,31 @@ import javax.swing.JMenuItem;
 public class NavBar extends JMenuBar {
 
     public NavBar(JFrame currentFrame) {
-        // Buat menu utama
         JMenu menuNav = new JMenu("Menu");
 
-        // Buat item navigasi
-        JMenuItem itemShop = new JMenuItem("Daftar Produk (Shop)");
+        JMenuItem itemHome = new JMenuItem("Home");
+        JMenuItem itemTransaksi = new JMenuItem("Mulai Transaksi");
         JMenuItem itemInventory = new JMenuItem("Inventory");
-        JMenuItem itemCart = new JMenuItem("Keranjang (Cart)");
+        JMenuItem itemHistory = new JMenuItem("Riwayat Transaksi");
         JMenuItem itemLog = new JMenuItem("Log Produk");
 
-        // Aksi saat diklik
-        itemShop.addActionListener(e -> pindahHalaman(currentFrame, new ItemListFrame()));
+        itemHome.addActionListener(e -> pindahHalaman(currentFrame, new HomeFrame()));
+        itemTransaksi.addActionListener(e -> pindahHalaman(currentFrame, new ItemListFrame()));
         itemInventory.addActionListener(e -> pindahHalaman(currentFrame, new InventoryFrame()));
-        itemCart.addActionListener(e -> pindahHalaman(currentFrame, new CartFrame()));
+        itemHistory.addActionListener(e -> pindahHalaman(currentFrame, new TransactionHistoryFrame()));
         itemLog.addActionListener(e -> pindahHalaman(currentFrame, new ItemLogFrame()));
 
-        // Masukkan item ke dalam menu
-        menuNav.add(itemShop);
+        menuNav.add(itemHome);
+        menuNav.addSeparator();
+        menuNav.add(itemTransaksi);
         menuNav.add(itemInventory);
-        menuNav.add(itemCart);
+        menuNav.add(itemHistory);
         menuNav.add(itemLog);
 
-        // Tambahkan menu ke NavBar
         this.add(menuNav);
     }
 
     private void pindahHalaman(JFrame currentFrame, JFrame targetFrame) {
-        // Cegah buka ulang halaman yang sedang aktif
         if (currentFrame.getClass().equals(targetFrame.getClass())) {
             return;
         }
