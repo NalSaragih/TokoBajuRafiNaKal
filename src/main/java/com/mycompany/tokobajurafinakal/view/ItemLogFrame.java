@@ -1,160 +1,140 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
 
 import com.mycompany.tokobajurafinakal.model.ProductLogModel;
 import com.mycompany.tokobajurafinakal.repository.LogRepository;
-import java.util.ArrayList;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Nala
  */
-public class ItemLogFrame extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemLogFrame.class.getName());
+public class ItemLogFrame extends JFrame {
+
     private final LogRepository logRepository = new LogRepository();
-    private List<ProductLogModel> logs = new ArrayList<>();
-    
-    /**
-     * Creates new form ItemLogFrame
-     */
+    private JTable logTable;
+
     public ItemLogFrame() {
-        initComponents();
+        initUi();
         loadLogsToTable();
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
-    
+
+    private void initUi() {
+        setTitle("Toko Baju RafiNaKal - Log Stok Produk");
+        setSize(780, 500);
+        setMinimumSize(new Dimension(700, 440));
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                UiUtil.closeOrGoHome(ItemLogFrame.this);
+            }
+        });
+
+        JPanel root = new JPanel(new BorderLayout(0, 14));
+        root.setBorder(BorderFactory.createEmptyBorder(18, 24, 20, 24));
+
+        JPanel headerPanel = new JPanel(new BorderLayout(16, 0));
+
+        JButton backBtn = UiUtil.createBackButton("← Kembali");
+        backBtn.addActionListener(e -> UiUtil.closeOrGoHome(this));
+
+        JPanel titleWrap = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 3));
+        titleWrap.add(UiUtil.createTitleLabel("Log Aktivitas Stok Produk"));
+
+        JButton refreshBtn = UiUtil.createSecondaryButton("Muat Ulang");
+        refreshBtn.setPreferredSize(new Dimension(110, 34));
+        refreshBtn.addActionListener(e -> loadLogsToTable());
+
+        headerPanel.add(backBtn, BorderLayout.WEST);
+        headerPanel.add(titleWrap, BorderLayout.CENTER);
+        headerPanel.add(refreshBtn, BorderLayout.EAST);
+        root.add(headerPanel, BorderLayout.NORTH);
+
+        DefaultTableModel tableModel = new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"ID Produk", "Nama Produk", "Tanggal", "Perubahan", "Tipe Aktivitas"}
+        ) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        };
+
+        logTable = new JTable(tableModel);
+        UiUtil.styleTable(logTable);
+
+        var colModel = logTable.getColumnModel();
+        colModel.getColumn(0).setPreferredWidth(85);
+        colModel.getColumn(0).setMaxWidth(100);
+        colModel.getColumn(1).setPreferredWidth(240);
+        colModel.getColumn(2).setPreferredWidth(120);
+        colModel.getColumn(3).setPreferredWidth(100);
+        colModel.getColumn(3).setMaxWidth(115);
+        colModel.getColumn(4).setPreferredWidth(170);
+
+        colModel.getColumn(0).setCellRenderer(UiUtil.centerRenderer());
+        colModel.getColumn(2).setCellRenderer(UiUtil.centerRenderer());
+        colModel.getColumn(3).setCellRenderer(UiUtil.centerRenderer());
+
+        JScrollPane scrollPane = new JScrollPane(logTable);
+        root.add(scrollPane, BorderLayout.CENTER);
+
+        setContentPane(root);
+        setLocationRelativeTo(null);
+    }
+
     private void loadLogsToTable() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
         model.setRowCount(0);
-        
-        logs = logRepository.getAllProductLogs();
+
+        List<ProductLogModel> logs = logRepository.getAllProductLogs();
         for (ProductLogModel log : logs) {
+            String idStr = log.getId() > 0 ? "#" + log.getId() : "-";
             String dateStr = (log.getLogDate() != null) ? log.getLogDate().toString() : "-";
-            String qtyStr = (log.getQuantityChange() > 0) ? "+" + log.getQuantityChange() : String.valueOf(log.getQuantityChange());
+            String qtyStr = (log.getQuantityChange() > 0)
+                    ? "+" + log.getQuantityChange()
+                    : String.valueOf(log.getQuantityChange());
 
             model.addRow(new Object[]{
-                log.getId(),
+                idStr,
                 log.getProductName(),
                 dateStr,
                 qtyStr,
-                log.getLogType()
+                formatLogType(log.getLogType())
             });
         }
     }
-    
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "product id", "name", "date", "quantity", "type"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true, true
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(jTable1);
-
-        jLabel1.setText("Product Log");
-
-        jButton1.setText("Kembali");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(42, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(204, 204, 204))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(84, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+    private String formatLogType(String type) {
+        if (type == null) {
+            return "-";
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ItemLogFrame().setVisible(true));
+        return switch (type) {
+            case "SALE" -> "SALE (Penjualan)";
+            case "ADMIN" -> "ADMIN (Update Stok)";
+            case "INITIAL" -> "INITIAL (Stok Awal)";
+            case "DELETED" -> "DELETED (Produk Dihapus)";
+            default -> type;
+        };
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    // End of variables declaration//GEN-END:variables
+    public static void main(String[] args) {
+        java.awt.EventQueue.invokeLater(() -> new ItemLogFrame().setVisible(true));
+    }
 }

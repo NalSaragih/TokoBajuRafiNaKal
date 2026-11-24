@@ -13,11 +13,9 @@ public class Product {
     private int id;
     private String productName;
     private double price;
-    private byte[] productImage; // BLOB
+    private byte[] productImage;
     private int currentStock;
     private String productDesc;
-
-    // Constructor, Getters, and Setters only
 
     public Product() {
     }

@@ -121,20 +121,23 @@ public class ProductRepository {
     
     public void delete(Product product) {
         String logSql = "INSERT INTO product_logs (product_id, log_date, quantity_change, log_type) VALUES (?, CURDATE(), ?, 'DELETED')";
+        String unlinkDetailsSql = "UPDATE transaction_details SET product_id = NULL WHERE product_id = ?";
         String deleteSql = "DELETE FROM products WHERE product_id = ?";
 
         try (Connection conn = DatabaseUtil.getConnection()) {
             conn.setAutoCommit(false);
 
             try (PreparedStatement logStmt = conn.prepareStatement(logSql);
+                 PreparedStatement unlinkStmt = conn.prepareStatement(unlinkDetailsSql);
                  PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
 
-                // 1. Log the deletion and remaining stock removal
                 logStmt.setInt(1, product.getId());
                 logStmt.setInt(2, -product.getCurrentStock());
                 logStmt.executeUpdate();
 
-                // 2. Delete product (ON DELETE SET NULL will nullify product_id in logs)
+                unlinkStmt.setInt(1, product.getId());
+                unlinkStmt.executeUpdate();
+
                 deleteStmt.setInt(1, product.getId());
                 deleteStmt.executeUpdate();
             }

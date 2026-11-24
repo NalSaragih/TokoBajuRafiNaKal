@@ -32,7 +32,7 @@ public class CartModel {
             if (item.getProduct().getId() == product.getId()) {
                 int newQty = item.getQuantity() + qty;
                 if (newQty > product.getCurrentStock()) {
-                    return false; // Not enough stock
+                    return false;
                 }
                 item.setQuantity(newQty);
                 return true;
@@ -40,7 +40,7 @@ public class CartModel {
         }
 
         if (qty > product.getCurrentStock()) {
-            return false; // Not enough stock
+            return false;
         }
 
         items.add(new CartItem(product, qty));
@@ -55,7 +55,7 @@ public class CartModel {
                     return true;
                 }
                 if (newQty > item.getProduct().getCurrentStock()) {
-                    return false; // Exceeds stock
+                    return false;
                 }
                 item.setQuantity(newQty);
                 return true;

@@ -50,21 +50,18 @@ public class TransactionRepository {
                    int productId = item.getProduct().getId();
                    int qty = item.getQuantity();
 
-                   // Transaction details
                    detailStmt.setInt(1, transactionId);
                    detailStmt.setInt(2, productId);
                    detailStmt.setInt(3, qty);
                    detailStmt.setDouble(4, item.getSubtotal());
                    detailStmt.addBatch();
 
-                   // Deduct stock
                    stockStmt.setInt(1, qty);
                    stockStmt.setInt(2, productId);
                    stockStmt.addBatch();
 
-                   // Product log
                    logStmt.setInt(1, productId);
-                   logStmt.setInt(2, -qty); // Negative to show stock decreased (remove '-' if you prefer positive)
+                   logStmt.setInt(2, -qty);
                    logStmt.addBatch();
                }
 

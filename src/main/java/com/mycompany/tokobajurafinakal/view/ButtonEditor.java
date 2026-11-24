@@ -26,8 +26,8 @@ public class ButtonEditor extends DefaultCellEditor {
         button = new JButton();
         button.setOpaque(true);
         button.addActionListener(e -> {
-            fireEditingStopped(); // Stop editing before running the action
-            onClickAction.accept(currentRow); // Trigger your custom code with the row index
+            fireEditingStopped();
+            onClickAction.accept(currentRow);
         });
     }
 

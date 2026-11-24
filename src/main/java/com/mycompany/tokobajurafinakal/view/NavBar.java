@@ -13,28 +13,35 @@ import javax.swing.JMenuItem;
  *
  * @author Rafi
  */
-
 public class NavBar extends JMenuBar {
 
     public NavBar(JFrame currentFrame) {
-        JMenu menuNav = new JMenu("Menu");
+        JMenu menuNav = new JMenu("Navigasi");
 
-        JMenuItem itemHome = new JMenuItem("Home");
-        JMenuItem itemTransaksi = new JMenuItem("Mulai Transaksi");
-        JMenuItem itemInventory = new JMenuItem("Inventory");
+        JMenuItem itemHome = new JMenuItem("Beranda (Home)");
+        JMenuItem itemTransaksi = new JMenuItem("Katalog & Transaksi");
+        JMenuItem itemCart = new JMenuItem("Keranjang Belanja");
+        JMenuItem itemInventory = new JMenuItem("Kelola Inventory");
+        JMenuItem itemNewProduct = new JMenuItem("Tambah Produk Baru");
         JMenuItem itemHistory = new JMenuItem("Riwayat Transaksi");
-        JMenuItem itemLog = new JMenuItem("Log Produk");
+        JMenuItem itemLog = new JMenuItem("Log Stok Produk");
 
         itemHome.addActionListener(e -> pindahHalaman(currentFrame, new HomeFrame()));
         itemTransaksi.addActionListener(e -> pindahHalaman(currentFrame, new ItemListFrame()));
+        itemCart.addActionListener(e -> pindahHalaman(currentFrame, new CartFrame()));
         itemInventory.addActionListener(e -> pindahHalaman(currentFrame, new InventoryFrame()));
+        itemNewProduct.addActionListener(e -> pindahHalaman(currentFrame, new NewItem()));
         itemHistory.addActionListener(e -> pindahHalaman(currentFrame, new TransactionHistoryFrame()));
         itemLog.addActionListener(e -> pindahHalaman(currentFrame, new ItemLogFrame()));
 
         menuNav.add(itemHome);
         menuNav.addSeparator();
         menuNav.add(itemTransaksi);
+        menuNav.add(itemCart);
+        menuNav.addSeparator();
         menuNav.add(itemInventory);
+        menuNav.add(itemNewProduct);
+        menuNav.addSeparator();
         menuNav.add(itemHistory);
         menuNav.add(itemLog);
 
@@ -43,6 +50,7 @@ public class NavBar extends JMenuBar {
 
     private void pindahHalaman(JFrame currentFrame, JFrame targetFrame) {
         if (currentFrame.getClass().equals(targetFrame.getClass())) {
+            targetFrame.dispose();
             return;
         }
         targetFrame.setLocationRelativeTo(null);

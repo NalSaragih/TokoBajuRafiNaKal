@@ -1,147 +1,207 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
+
 import com.mycompany.tokobajurafinakal.entity.Product;
+import com.mycompany.tokobajurafinakal.model.CartModel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 
 /**
  *
  * @author Nala
  */
-public class ItemDetailFrame extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemDetailFrame.class.getName());
+public class ItemDetailFrame extends JFrame {
 
-    /**
-     * Creates new form ItemDetailFrame
-     */
+    private static final int IMG_WIDTH = 240;
+    private static final int IMG_HEIGHT = 290;
+
+    private Product currentProduct;
+    private JLabel idLabel;
+    private JLabel nameLabel;
+    private JLabel priceLabel;
+    private JLabel stockLabel;
+    private JLabel imgLabel;
+    private JTextArea descTextArea;
+    private JButton addCartBtn;
+
     public ItemDetailFrame() {
-        initComponents();
+        this(null);
     }
 
-    // New constructor to receive the selected product
     public ItemDetailFrame(Product product) {
-        initComponents();
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE); // Closes only this window, not the whole app
-        loadProductDetails(product);
+        this.currentProduct = product;
+        initUi();
+        if (product != null) {
+            loadProductDetails(product);
+        }
+    }
+
+    private void initUi() {
+        setTitle("Toko Baju RafiNaKal - Detail Produk");
+        setSize(680, 470);
+        setMinimumSize(new Dimension(640, 440));
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                UiUtil.closeOrGoHome(ItemDetailFrame.this);
+            }
+        });
+
+        JPanel root = new JPanel(new BorderLayout(18, 16));
+        root.setBorder(BorderFactory.createEmptyBorder(20, 26, 20, 26));
+
+        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
+        JButton backBtn = UiUtil.createBackButton("← Kembali");
+        backBtn.addActionListener(e -> UiUtil.closeOrGoHome(this));
+
+        JLabel titleLabel = UiUtil.createTitleLabel("Detail Produk");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JPanel spacer = new JPanel();
+        spacer.setPreferredSize(backBtn.getPreferredSize());
+
+        headerPanel.add(backBtn, BorderLayout.WEST);
+        headerPanel.add(titleLabel, BorderLayout.CENTER);
+        headerPanel.add(spacer, BorderLayout.EAST);
+        root.add(headerPanel, BorderLayout.NORTH);
+
+        JPanel contentPanel = new JPanel(new BorderLayout(24, 0));
+
+        imgLabel = new JLabel("Tidak ada gambar", SwingConstants.CENTER);
+        imgLabel.setPreferredSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
+        imgLabel.setForeground(UiUtil.MUTED_TEXT);
+        imgLabel.setBorder(UiUtil.createPreviewBorder());
+
+        JPanel infoPanel = new JPanel(new BorderLayout(0, 12));
+
+        JPanel metaPanel = new JPanel();
+        metaPanel.setLayout(new BoxLayout(metaPanel, BoxLayout.Y_AXIS));
+
+        idLabel = new JLabel("ID Produk: -");
+        idLabel.setFont(UiUtil.FONT_SUBTITLE);
+        idLabel.setForeground(UiUtil.MUTED_TEXT);
+
+        nameLabel = new JLabel("Nama Produk");
+        nameLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+
+        priceLabel = new JLabel("Rp 0");
+        priceLabel.setFont(new Font("SansSerif", Font.BOLD, 17));
+        priceLabel.setForeground(UiUtil.ACCENT_GREEN);
+
+        stockLabel = new JLabel("Stok Tersedia: 0");
+        stockLabel.setFont(UiUtil.FONT_BODY);
+
+        metaPanel.add(idLabel);
+        metaPanel.add(Box.createVerticalStrut(4));
+        metaPanel.add(nameLabel);
+        metaPanel.add(Box.createVerticalStrut(6));
+        metaPanel.add(priceLabel);
+        metaPanel.add(Box.createVerticalStrut(6));
+        metaPanel.add(stockLabel);
+
+        JPanel descPanel = new JPanel(new BorderLayout(0, 6));
+        JLabel descHeader = new JLabel("Deskripsi Produk");
+        descHeader.setFont(UiUtil.FONT_LABEL);
+
+        descTextArea = new JTextArea();
+        descTextArea.setEditable(false);
+        descTextArea.setLineWrap(true);
+        descTextArea.setWrapStyleWord(true);
+        descTextArea.setFont(UiUtil.FONT_BODY);
+        JScrollPane scrollPane = new JScrollPane(descTextArea);
+
+        descPanel.add(descHeader, BorderLayout.NORTH);
+        descPanel.add(scrollPane, BorderLayout.CENTER);
+
+        infoPanel.add(metaPanel, BorderLayout.NORTH);
+        infoPanel.add(descPanel, BorderLayout.CENTER);
+
+        contentPanel.add(imgLabel, BorderLayout.WEST);
+        contentPanel.add(infoPanel, BorderLayout.CENTER);
+        root.add(contentPanel, BorderLayout.CENTER);
+
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        JButton closeBtn = UiUtil.createSecondaryButton("Tutup");
+        closeBtn.setPreferredSize(new Dimension(100, 36));
+        closeBtn.addActionListener(e -> UiUtil.closeOrGoHome(this));
+
+        addCartBtn = UiUtil.createPrimaryButton("+ Masuk Keranjang");
+        addCartBtn.setPreferredSize(new Dimension(165, 36));
+        addCartBtn.addActionListener(e -> addCurrentProductToCart());
+
+        footerPanel.add(closeBtn);
+        footerPanel.add(addCartBtn);
+        root.add(footerPanel, BorderLayout.SOUTH);
+
+        setContentPane(root);
+        setLocationRelativeTo(null);
     }
 
     private void loadProductDetails(Product product) {
-        idLabel.setText("ID: " + product.getId());
-        nameLabel.setText("Name: " + product.getProductName());
-        stockLabel.setText("Stock: " + product.getCurrentStock());
-        descTextArea.setText(product.getProductDesc());
+        idLabel.setText("ID Produk: #" + product.getId());
+        nameLabel.setText(product.getProductName());
+        priceLabel.setText(UiUtil.formatRupiah(product.getPrice()));
 
-        if (product.getProductImage() != null) {
-            ImageIcon icon = new ImageIcon(product.getProductImage());
-            Image scaled = icon.getImage().getScaledInstance(318, 428, Image.SCALE_SMOOTH);
-            imgLabel.setIcon(new ImageIcon(scaled));
-            imgLabel.setText(""); // Remove "pic here" placeholder
+        if (product.getCurrentStock() > 0) {
+            stockLabel.setText("Stok Tersedia: " + product.getCurrentStock() + " pcs");
         } else {
-            imgLabel.setText("No Image Available");
+            stockLabel.setText("Stok: Habis (0)");
+            stockLabel.setForeground(UiUtil.ACCENT_RED);
+            addCartBtn.setEnabled(false);
+        }
+
+        String desc = product.getProductDesc();
+        descTextArea.setText((desc != null && !desc.isBlank()) ? desc : "Tidak ada deskripsi produk.");
+
+        if (product.getProductImage() != null && product.getProductImage().length > 0) {
+            ImageIcon icon = new ImageIcon(product.getProductImage());
+            Image scaled = icon.getImage().getScaledInstance(IMG_WIDTH - 14, IMG_HEIGHT - 14, Image.SCALE_SMOOTH);
+            imgLabel.setIcon(new ImageIcon(scaled));
+            imgLabel.setText("");
+        } else {
+            imgLabel.setIcon(null);
+            imgLabel.setText("Tidak ada gambar");
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        nameLabel = new javax.swing.JLabel();
-        idLabel = new javax.swing.JLabel();
-        stockLabel = new javax.swing.JLabel();
-        imgLabel = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        descTextArea = new javax.swing.JTextArea();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        nameLabel.setText("Item Name");
-
-        idLabel.setText("Id");
-
-        stockLabel.setText("Stock");
-
-        imgLabel.setText("pic here");
-
-        descTextArea.setEditable(false);
-        descTextArea.setColumns(20);
-        descTextArea.setRows(5);
-        jScrollPane1.setViewportView(descTextArea);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(idLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stockLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(58, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(idLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stockLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(60, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+    private void addCurrentProductToCart() {
+        if (currentProduct == null) {
+            return;
         }
-        //</editor-fold>
+        boolean added = CartModel.getInstance().addItem(currentProduct, 1);
+        if (added) {
+            JOptionPane.showMessageDialog(this,
+                    "\"" + currentProduct.getProductName() + "\" ditambahkan ke keranjang!");
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Stok tidak mencukupi untuk menambah lagi!",
+                    "Stok Habis",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
-        /* Create and display the form */
+    public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(() -> new ItemDetailFrame().setVisible(true));
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea descTextArea;
-    private javax.swing.JLabel idLabel;
-    private javax.swing.JLabel imgLabel;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel nameLabel;
-    private javax.swing.JLabel stockLabel;
-    // End of variables declaration//GEN-END:variables
 }

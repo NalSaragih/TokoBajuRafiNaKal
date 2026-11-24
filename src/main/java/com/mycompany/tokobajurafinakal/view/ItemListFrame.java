@@ -1,236 +1,245 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
+
 import com.mycompany.tokobajurafinakal.entity.Product;
+import com.mycompany.tokobajurafinakal.model.CartItem;
 import com.mycompany.tokobajurafinakal.model.CartModel;
 import com.mycompany.tokobajurafinakal.repository.ProductRepository;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
  * @author Nala
  */
-public class ItemListFrame extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemListFrame.class.getName());
-    private List<Product> productList = new ArrayList<>();
+public class ItemListFrame extends JFrame {
+
+    private List<Product> allProducts = new ArrayList<>();
+    private List<Product> displayedProducts = new ArrayList<>();
     private final ProductRepository productRepository = new ProductRepository();
-    /**
-     * Creates new form ItemListFrame
-     */
+
+    private JTable productTable;
+    private JTextField searchField;
+    private JButton cartBtn;
+
     public ItemListFrame() {
-        initComponents();
+        initUi();
+        loadProductsToTable();
+        updateCartBadge();
+    }
+
+    private void initUi() {
+        setTitle("Toko Baju RafiNaKal - Katalog Produk");
+        setSize(820, 540);
+        setMinimumSize(new Dimension(760, 480));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(new NavBar(this));
-        setupTableButtons();
-        loadProductsToTable();  
-    }
-    
 
-    private void setupTableButtons() {
-        
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        
-        var colModel = jTable1.getColumnModel();
-        
-        colModel.getColumn(0).setMinWidth(180);
-        colModel.getColumn(0).setPreferredWidth(240);
-        colModel.getColumn(0).setMaxWidth(Integer.MAX_VALUE);
-        colModel.getColumn(1).setMinWidth(90);
-        colModel.getColumn(1).setPreferredWidth(110);
-        colModel.getColumn(2).setMinWidth(65);
-        colModel.getColumn(2).setPreferredWidth(75);
-        colModel.getColumn(2).setMaxWidth(90);
-        colModel.getColumn(3).setMinWidth(100);
-        colModel.getColumn(3).setPreferredWidth(120);
-        colModel.getColumn(4).setMinWidth(80);
-        colModel.getColumn(4).setPreferredWidth(45);
-        colModel.getColumn(4).setMaxWidth(100);
-        
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        colModel.getColumn(1).setCellRenderer(centerRenderer);
-        colModel.getColumn(4).setCellRenderer(centerRenderer);
-        
-        jTable1.getColumn("detail").setCellRenderer(new ButtonRenderer());
-        jTable1.getColumn("detail").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
-            Product selected = productList.get(row);
-            
-            ItemDetailFrame detailFrame = new ItemDetailFrame(selected);
-            detailFrame.setLocationRelativeTo(null); // Center on screen
-            detailFrame.setVisible(true);
-        }));
+        JPanel root = new JPanel(new BorderLayout(0, 14));
+        root.setBorder(BorderFactory.createEmptyBorder(18, 24, 20, 24));
 
-        jTable1.getColumn("add to cart").setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
-            Product selected = productList.get(row);
-            boolean added = CartModel.getInstance().addItem(selected, 1);
+        JPanel headerPanel = new JPanel(new BorderLayout(16, 0));
 
-            if (added) {
-                JOptionPane.showMessageDialog(this, "Added to cart: " + selected.getProductName());
-            } else {
-                JOptionPane.showMessageDialog(this, "Cannot add more. Insufficient stock!");
+        JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JButton backBtn = UiUtil.createBackButton("← Beranda");
+        backBtn.addActionListener(e -> {
+            HomeFrame home = new HomeFrame();
+            home.setLocationRelativeTo(null);
+            home.setVisible(true);
+            this.dispose();
+        });
+        leftHeader.add(backBtn);
+
+        JLabel titleLabel = UiUtil.createTitleLabel("Katalog Produk");
+
+        JPanel rightHeader = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        searchField = new JTextField(16);
+        searchField.setPreferredSize(new Dimension(190, 32));
+        searchField.putClientProperty("JTextField.placeholderText", "Cari nama produk...");
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterProducts();
             }
-        }));
 
-        jTable1.setRowHeight(35);
-    }
-    
-    private void loadProductsToTable() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
-        
-        productList = productRepository.getAllProducts();
-        
-        for (Product p:productList) {
-            model.addRow(new Object[]{
-                p.getProductName(), 
-                p.getCurrentStock(),
-                p.getPrice(),   
-                "Detail",      
-                "+ Cart"          
-            });
-        }
-    }
-    
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        cartBtn = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "name", "stock", "price", "detail", "add to cart"
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterProducts();
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true, true
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterProducts();
             }
         });
-        jScrollPane1.setViewportView(jTable1);
 
-        cartBtn.setText("Cart");
-        cartBtn.addActionListener(this::cartBtnActionPerformed);
+        JButton refreshBtn = UiUtil.createSecondaryButton("Muat Ulang");
+        refreshBtn.setPreferredSize(new Dimension(105, 32));
+        refreshBtn.addActionListener(e -> loadProductsToTable());
 
-        jButton1.setText("Kembali");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        rightHeader.add(searchField);
+        rightHeader.add(refreshBtn);
 
-        jButton2.setText("Riwayat Transaksi");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        JPanel centerTitleWrap = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 3));
+        centerTitleWrap.add(titleLabel);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(98, 98, 98)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cartBtn)
-                        .addGap(391, 391, 391)
-                        .addComponent(jButton2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(13, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cartBtn)
-                    .addComponent(jButton2))
-                .addContainerGap(25, Short.MAX_VALUE))
-        );
+        headerPanel.add(leftHeader, BorderLayout.WEST);
+        headerPanel.add(centerTitleWrap, BorderLayout.CENTER);
+        headerPanel.add(rightHeader, BorderLayout.EAST);
+        root.add(headerPanel, BorderLayout.NORTH);
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+        DefaultTableModel tableModel = new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"Nama Produk", "Stok", "Harga", "Detail", "Aksi"}
+        ) {
+            private final boolean[] canEdit = new boolean[]{false, false, false, true, true};
 
-    private void cartBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartBtnActionPerformed
-        // TODO add your handling code here:
-        JFrame cartFrame = new CartFrame();
-        cartFrame.setLocationRelativeTo(null);
-        cartFrame.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_cartBtnActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        HomeFrame home = new HomeFrame();
-        home.setLocationRelativeTo(null);
-        home.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        TransactionHistoryFrame historyFrame = new TransactionHistoryFrame();
-        historyFrame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-        historyFrame.setLocationRelativeTo(this); // Muncul di tengah ItemListFrame
-        historyFrame.setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+        };
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ItemListFrame().setVisible(true));
+        productTable = new JTable(tableModel);
+        UiUtil.styleTable(productTable);
+        setupTableColumns();
+
+        JScrollPane scrollPane = new JScrollPane(productTable);
+        root.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel footerPanel = new JPanel(new BorderLayout());
+
+        JPanel leftFooter = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JButton historyBtn = UiUtil.createSecondaryButton("Riwayat Transaksi");
+        historyBtn.setPreferredSize(new Dimension(155, 36));
+        historyBtn.addActionListener(e -> {
+            TransactionHistoryFrame historyFrame = new TransactionHistoryFrame();
+            historyFrame.setLocationRelativeTo(this);
+            historyFrame.setVisible(true);
+        });
+        leftFooter.add(historyBtn);
+
+        JPanel rightFooter = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        cartBtn = UiUtil.createPrimaryButton("Lihat Keranjang (0)");
+        cartBtn.setPreferredSize(new Dimension(190, 36));
+        cartBtn.addActionListener(e -> {
+            CartFrame cartFrame = new CartFrame();
+            cartFrame.setLocationRelativeTo(null);
+            cartFrame.setVisible(true);
+            this.dispose();
+        });
+        rightFooter.add(cartBtn);
+
+        footerPanel.add(leftFooter, BorderLayout.WEST);
+        footerPanel.add(rightFooter, BorderLayout.EAST);
+        root.add(footerPanel, BorderLayout.SOUTH);
+
+        setContentPane(root);
+        setLocationRelativeTo(null);
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cartBtn;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    // End of variables declaration//GEN-END:variables
+    private void setupTableColumns() {
+        var colModel = productTable.getColumnModel();
+        colModel.getColumn(0).setPreferredWidth(260);
+        colModel.getColumn(1).setPreferredWidth(75);
+        colModel.getColumn(1).setMaxWidth(95);
+        colModel.getColumn(2).setPreferredWidth(135);
+        colModel.getColumn(3).setPreferredWidth(95);
+        colModel.getColumn(3).setMaxWidth(110);
+        colModel.getColumn(4).setPreferredWidth(120);
+        colModel.getColumn(4).setMaxWidth(135);
+
+        colModel.getColumn(1).setCellRenderer(UiUtil.centerRenderer());
+        colModel.getColumn(2).setCellRenderer(UiUtil.rightRenderer());
+
+        colModel.getColumn(3).setCellRenderer(new ButtonRenderer());
+        colModel.getColumn(3).setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            if (row >= 0 && row < displayedProducts.size()) {
+                Product selected = displayedProducts.get(row);
+                ItemDetailFrame detailFrame = new ItemDetailFrame(selected);
+                detailFrame.setLocationRelativeTo(this);
+                detailFrame.setVisible(true);
+            }
+        }));
+
+        colModel.getColumn(4).setCellRenderer(new ButtonRenderer());
+        colModel.getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), row -> {
+            if (row >= 0 && row < displayedProducts.size()) {
+                Product selected = displayedProducts.get(row);
+                boolean added = CartModel.getInstance().addItem(selected, 1);
+                if (added) {
+                    updateCartBadge();
+                    JOptionPane.showMessageDialog(this,
+                            "\"" + selected.getProductName() + "\" masuk ke keranjang!");
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Stok tidak mencukupi (tersisa " + selected.getCurrentStock() + ")!",
+                            "Stok Tidak Cukup",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }));
+    }
+
+    private void loadProductsToTable() {
+        allProducts = productRepository.getAllProducts();
+        filterProducts();
+    }
+
+    private void filterProducts() {
+        if (productTable.isEditing()) {
+            productTable.getCellEditor().stopCellEditing();
+        }
+        String keyword = searchField.getText().trim().toLowerCase(Locale.ROOT);
+        displayedProducts = new ArrayList<>();
+
+        DefaultTableModel model = (DefaultTableModel) productTable.getModel();
+        model.setRowCount(0);
+
+        for (Product p : allProducts) {
+            String name = p.getProductName() != null ? p.getProductName() : "";
+            if (keyword.isEmpty() || name.toLowerCase(Locale.ROOT).contains(keyword)) {
+                displayedProducts.add(p);
+                model.addRow(new Object[]{
+                    name,
+                    p.getCurrentStock(),
+                    UiUtil.formatRupiah(p.getPrice()),
+                    "Detail",
+                    "+ Keranjang"
+                });
+            }
+        }
+    }
+
+    private void updateCartBadge() {
+        int totalItems = 0;
+        for (CartItem item : CartModel.getInstance().getItems()) {
+            totalItems += item.getQuantity();
+        }
+        cartBtn.setText("Lihat Keranjang (" + totalItems + ")");
+    }
+
+    public static void main(String[] args) {
+        java.awt.EventQueue.invokeLater(() -> new ItemListFrame().setVisible(true));
+    }
 }
