@@ -55,6 +55,7 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 |--------------------|----------------|-------------------------------------------------|
 | `id`               | INT (PK)       | ID unik transaksi (Auto Increment).             |
 | `transaction_date` | DATETIME       | Tanggal dan waktu transaksi dilakukan.          |
+| `total`            | DECIMAL(10,2)  | Total harga keseluruhan dari transaksi tersebut.|
 
 ### Transaction_details
 | Nama Kolom         | Tipe Data      | Keterangan                                      |
@@ -64,7 +65,6 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 | `product_id`       | INT (FK)       | Foreign Key, merujuk ke `id` di tabel `products`.     |
 | `quantity`         | INT            | Jumlah barang (baju) yang dibeli pada item ini. |
 | `subtotal`         | DECIMAL(10,2)  | Subtotal harga (`quantity` x harga produk).     |
-| `total_amount`     | DECIMAL(10,2)  | Total harga keseluruhan dari transaksi tersebut.|
 
 ### Product_logs
 | Nama Kolom        | Tipe Data      | Keterangan                                      |
@@ -79,14 +79,31 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 
 ### Paket: `com.mycompany.tokobajurafinakal` 
 *   `TokoBajuRafiNaKal.java`: *Class* utama yang berfungsi untuk menginisialisasi tema FlatDarkLaf dan memicu tampilan awal aplikasi.
-*   `DatabaseHelper.java`: *Class* utilitas yang menangani koneksi MySQL, serta eksekusi *query* umum.
 
 ### Paket: `com.mycompany.tokobajurafinakal.view` 
 *   `MainFrame.java`: *Frame* utama yang menampilkan katalog baju, gambar produk (dari BLOB), harga, dan stok yang tersedia.
 *   `CartFrame.java`: *Frame* untuk melihat isi keranjang belanja, melihat total harga, dan melakukan aksi Checkout.
-*   `StockManagementFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).   
+*   `InventoryFrame.java`: *Frame* khusus admin untuk menambah barang baru atau melakukan penambahan/pengurangan stok (*restock*).
 
-### Paket: `com.mycompany.tokobajurafinakal.controller` (Logika & Pemrosesan)
+
+### Paket: `com.mycompany.tokobajurafinakal.repository` (Logika & Pemrosesan)
+*   `DatabaseHelper.java`: *Class* utilitas yang menangani koneksi MySQL, serta eksekusi *query* umum.
 *   `ProductController.java`: Menangani operasi CRUD produk, termasuk mengambil gambar BLOB, memperbarui `current_stock`, dan memasukkan catatan ke `product_logs`.
 *   `TransactionController.java`: Menangani logika saat *checkout*. *Class* ini akan memastikan bahwa insert ke `transactions`, `transaction_details`, dan pemotongan stok dilakukan dalam satu kesatuan proses
 
