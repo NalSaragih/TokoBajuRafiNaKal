@@ -55,7 +55,7 @@ Aplikasi kasir dan pengecekan stok aebuah toko baju yang berbasis aplikasi
 | `price`         | DECIMAL(10,2)  | Harga baju.                                     |
 | `product_image` | LONGBLOB       | Menyimpan file gambar baju dalam bentuk byte.   |
 | `current_stock` | INT            | Stok produk saat ini.                           |
-| `product_desc`  | VARCHAR(150)   | Deskripsi atau keterangan detail produk baju.   |
+| `product_desc`  | VARCHAR(500)   | Deskripsi atau keterangan detail produk baju.   |
 
 ### Transactions
 | Nama Kolom         | Tipe Data      | Keterangan                                      |
