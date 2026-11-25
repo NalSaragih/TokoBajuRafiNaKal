@@ -59,15 +59,31 @@ public final class UiUtil {
         return String.valueOf(amount);
     }
 
+    public static JButton polishButton(JButton btn) {
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.putClientProperty("FlatLaf.style", "arc: 8");
+        return btn;
+    }
+
+    public static JButton stylePrimaryButton(JButton btn) {
+        return polishButton(btn);
+    }
+
+    public static JButton styleSuccessButton(JButton btn) {
+        return polishButton(btn);
+    }
+
+    public static JButton styleSecondaryButton(JButton btn) {
+        return polishButton(btn);
+    }
+
     public static JButton createPrimaryButton(String text) {
         JButton btn = new JButton(text);
         btn.setFont(FONT_BUTTON);
         btn.setBackground(ACCENT_BLUE);
         btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.putClientProperty("FlatLaf.style", "arc: 8");
-        return btn;
+        return polishButton(btn);
     }
 
     public static JButton createSuccessButton(String text) {
@@ -75,19 +91,15 @@ public final class UiUtil {
         btn.setFont(FONT_BUTTON);
         btn.setBackground(ACCENT_GREEN);
         btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.putClientProperty("FlatLaf.style", "arc: 8");
-        return btn;
+        return polishButton(btn);
     }
 
     public static JButton createSecondaryButton(String text) {
         JButton btn = new JButton(text);
         btn.setFont(FONT_BODY);
-        btn.setFocusPainted(false);
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.putClientProperty("FlatLaf.style", "arc: 8");
-        return btn;
+        btn.setBackground(new Color(72, 76, 82));
+        btn.setForeground(new Color(235, 238, 242));
+        return polishButton(btn);
     }
 
     public static JButton createBackButton(String text) {

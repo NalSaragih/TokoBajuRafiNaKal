@@ -1,27 +1,16 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
 
 import com.mycompany.tokobajurafinakal.model.CartItem;
 import com.mycompany.tokobajurafinakal.model.CartModel;
 import com.mycompany.tokobajurafinakal.repository.TransactionRepository;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,131 +18,30 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Nala
  */
-public class CartFrame extends JFrame {
-
-    private JTable cartTable;
-    private JTextField totalField;
-    private JTextField paidField;
-    private JButton payBtn;
+public class CartFrame extends javax.swing.JFrame {
 
     public CartFrame() {
-        initUi();
+        initComponents();
+        setupCustomUi();
         loadCartToTable();
     }
 
-    private void initUi() {
-        setTitle("Toko Baju RafiNaKal - Keranjang Belanja");
-        setSize(840, 530);
+    private void setupCustomUi() {
         setMinimumSize(new Dimension(780, 460));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(new NavBar(this));
 
-        JPanel root = new JPanel(new BorderLayout(0, 14));
-        root.setBorder(BorderFactory.createEmptyBorder(18, 24, 20, 24));
+        UiUtil.styleSecondaryButton(backBtn);
+        UiUtil.styleSecondaryButton(clearCartBtn);
+        UiUtil.styleSuccessButton(payBtn);
 
-        JPanel headerPanel = new JPanel(new BorderLayout(16, 0));
-
-        JButton backBtn = UiUtil.createBackButton("← Katalog");
-        backBtn.addActionListener(e -> backToCatalog());
-
-        JPanel titleWrap = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 3));
-        titleWrap.add(UiUtil.createTitleLabel("Keranjang Belanja"));
-
-        JButton clearCartBtn = UiUtil.createSecondaryButton("Kosongkan Keranjang");
-        clearCartBtn.setPreferredSize(new Dimension(170, 34));
-        clearCartBtn.addActionListener(e -> {
-            if (CartModel.getInstance().isEmpty()) {
-                return;
-            }
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Kosongkan seluruh isi keranjang?",
-                    "Konfirmasi",
-                    JOptionPane.YES_NO_OPTION
-            );
-            if (confirm == JOptionPane.YES_OPTION) {
-                CartModel.getInstance().clear();
-                loadCartToTable();
-            }
-        });
-
-        headerPanel.add(backBtn, BorderLayout.WEST);
-        headerPanel.add(titleWrap, BorderLayout.CENTER);
-        headerPanel.add(clearCartBtn, BorderLayout.EAST);
-        root.add(headerPanel, BorderLayout.NORTH);
-
-        DefaultTableModel tableModel = new DefaultTableModel(
-                new Object[][]{},
-                new String[]{"Nama Produk", "Harga Satuan", "Jumlah", "Subtotal", "+", "-", "Hapus"}
-        ) {
-            private final boolean[] canEdit = new boolean[]{false, false, false, false, true, true, true};
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        };
-
-        cartTable = new JTable(tableModel);
-        UiUtil.styleTable(cartTable);
-        setupTableColumns();
-
-        JScrollPane scrollPane = new JScrollPane(cartTable);
-        root.add(scrollPane, BorderLayout.CENTER);
-
-        JPanel footerPanel = new JPanel(new BorderLayout(16, 0));
-        footerPanel.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
-
-        JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        JLabel totalLabel = new JLabel("Total Belanja:");
-        totalLabel.setFont(UiUtil.FONT_LABEL);
-
-        totalField = new JTextField(13);
-        totalField.setEditable(false);
-        totalField.setFont(new Font("SansSerif", Font.BOLD, 14));
-        totalField.setPreferredSize(new Dimension(160, 36));
-
-        totalPanel.add(totalLabel);
-        totalPanel.add(totalField);
-
-        JPanel paymentPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        JLabel paidLabel = new JLabel("Nominal Bayar (Rp):");
-        paidLabel.setFont(UiUtil.FONT_LABEL);
-
-        paidField = new JTextField(12);
-        paidField.setPreferredSize(new Dimension(150, 36));
         paidField.putClientProperty("JTextField.placeholderText", "Contoh: 200000");
 
-        payBtn = UiUtil.createSuccessButton("Bayar Sekarang");
-        payBtn.setPreferredSize(new Dimension(160, 36));
-        payBtn.addActionListener(e -> processCheckout());
-
-        paymentPanel.add(paidLabel);
-        paymentPanel.add(paidField);
-        paymentPanel.add(payBtn);
-
-        footerPanel.add(totalPanel, BorderLayout.WEST);
-        footerPanel.add(paymentPanel, BorderLayout.EAST);
-        root.add(footerPanel, BorderLayout.SOUTH);
-
-        setContentPane(root);
-        setLocationRelativeTo(null);
+        UiUtil.styleTable(cartTable);
+        setupTableColumns();
     }
 
     private void setupTableColumns() {
         var colModel = cartTable.getColumnModel();
-        colModel.getColumn(0).setPreferredWidth(230);
-        colModel.getColumn(1).setPreferredWidth(120);
-        colModel.getColumn(2).setPreferredWidth(70);
-        colModel.getColumn(2).setMaxWidth(85);
-        colModel.getColumn(3).setPreferredWidth(130);
-        colModel.getColumn(4).setPreferredWidth(48);
-        colModel.getColumn(4).setMaxWidth(52);
-        colModel.getColumn(5).setPreferredWidth(48);
-        colModel.getColumn(5).setMaxWidth(52);
-        colModel.getColumn(6).setPreferredWidth(80);
-        colModel.getColumn(6).setMaxWidth(90);
-
         colModel.getColumn(1).setCellRenderer(UiUtil.rightRenderer());
         colModel.getColumn(2).setCellRenderer(UiUtil.centerRenderer());
         colModel.getColumn(3).setCellRenderer(UiUtil.rightRenderer());
@@ -220,7 +108,202 @@ public class CartFrame extends JFrame {
         payBtn.setEnabled(!items.isEmpty());
     }
 
-    private void processCheckout() {
+    private void backToCatalog() {
+        ItemListFrame itemListFrame = new ItemListFrame();
+        itemListFrame.setLocationRelativeTo(null);
+        itemListFrame.setVisible(true);
+        this.dispose();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        backBtn = new javax.swing.JButton();
+        titleLabel = new javax.swing.JLabel();
+        clearCartBtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        cartTable = new javax.swing.JTable();
+        totalLabel = new javax.swing.JLabel();
+        totalField = new javax.swing.JTextField();
+        paidLabel = new javax.swing.JLabel();
+        paidField = new javax.swing.JTextField();
+        payBtn = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Toko Baju RafiNaKal - Keranjang Belanja");
+
+        mainPanel.setBackground(new java.awt.Color(43, 45, 48));
+
+        backBtn.setBackground(new java.awt.Color(72, 76, 82));
+        backBtn.setForeground(new java.awt.Color(235, 238, 242));
+        backBtn.setText("← Katalog");
+        backBtn.addActionListener(this::backBtnActionPerformed);
+
+        titleLabel.setForeground(new java.awt.Color(235, 238, 242));
+        titleLabel.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        titleLabel.setText("Keranjang Belanja");
+
+        clearCartBtn.setBackground(new java.awt.Color(168, 56, 56));
+        clearCartBtn.setForeground(new java.awt.Color(255, 255, 255));
+        clearCartBtn.setText("Kosongkan Keranjang");
+        clearCartBtn.addActionListener(this::clearCartBtnActionPerformed);
+
+        cartTable.setBackground(new java.awt.Color(52, 55, 60));
+        cartTable.setForeground(new java.awt.Color(235, 238, 242));
+        cartTable.setRowHeight(36);
+        cartTable.setSelectionBackground(new java.awt.Color(38, 117, 191));
+        cartTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        cartTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nama Produk", "Harga Satuan", "Jumlah", "Subtotal", "+", "-", "Hapus"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        cartTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(cartTable);
+        if (cartTable.getColumnModel().getColumnCount() > 0) {
+            cartTable.getColumnModel().getColumn(0).setMinWidth(180);
+            cartTable.getColumnModel().getColumn(0).setPreferredWidth(230);
+            cartTable.getColumnModel().getColumn(1).setMinWidth(100);
+            cartTable.getColumnModel().getColumn(1).setPreferredWidth(120);
+            cartTable.getColumnModel().getColumn(2).setMinWidth(60);
+            cartTable.getColumnModel().getColumn(2).setPreferredWidth(70);
+            cartTable.getColumnModel().getColumn(2).setMaxWidth(85);
+            cartTable.getColumnModel().getColumn(3).setMinWidth(105);
+            cartTable.getColumnModel().getColumn(3).setPreferredWidth(130);
+            cartTable.getColumnModel().getColumn(4).setMinWidth(45);
+            cartTable.getColumnModel().getColumn(4).setPreferredWidth(48);
+            cartTable.getColumnModel().getColumn(4).setMaxWidth(52);
+            cartTable.getColumnModel().getColumn(5).setMinWidth(45);
+            cartTable.getColumnModel().getColumn(5).setPreferredWidth(48);
+            cartTable.getColumnModel().getColumn(5).setMaxWidth(52);
+            cartTable.getColumnModel().getColumn(6).setMinWidth(75);
+            cartTable.getColumnModel().getColumn(6).setPreferredWidth(80);
+            cartTable.getColumnModel().getColumn(6).setMaxWidth(90);
+        }
+
+        totalLabel.setForeground(new java.awt.Color(235, 238, 242));
+        totalLabel.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        totalLabel.setText("Total Belanja:");
+
+        totalField.setBackground(new java.awt.Color(58, 61, 66));
+        totalField.setForeground(new java.awt.Color(74, 201, 126));
+        totalField.setCaretColor(new java.awt.Color(235, 238, 242));
+        totalField.setEditable(false);
+        totalField.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+
+        paidLabel.setForeground(new java.awt.Color(235, 238, 242));
+        paidLabel.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        paidLabel.setText("Nominal Bayar (Rp):");
+
+        payBtn.setBackground(new java.awt.Color(39, 138, 82));
+        payBtn.setForeground(new java.awt.Color(255, 255, 255));
+        payBtn.setText("Bayar Sekarang");
+        payBtn.addActionListener(this::payBtnActionPerformed);
+
+        paidField.setBackground(new java.awt.Color(58, 61, 66));
+        paidField.setForeground(new java.awt.Color(235, 238, 242));
+        paidField.setCaretColor(new java.awt.Color(235, 238, 242));
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 792, Short.MAX_VALUE)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(titleLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(clearCartBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(totalLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(paidLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(paidField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(payBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(24, 24, 24))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleLabel)
+                    .addComponent(clearCartBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addGap(16, 16, 16)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(totalLabel)
+                    .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(paidLabel)
+                    .addComponent(paidField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(payBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        backToCatalog();
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void clearCartBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCartBtnActionPerformed
+        if (CartModel.getInstance().isEmpty()) {
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Kosongkan seluruh isi keranjang?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (confirm == JOptionPane.YES_OPTION) {
+            CartModel.getInstance().clear();
+            loadCartToTable();
+        }
+    }//GEN-LAST:event_clearCartBtnActionPerformed
+
+    private void payBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payBtnActionPerformed
         CartModel cart = CartModel.getInstance();
         if (cart.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Keranjang masih kosong!");
@@ -279,16 +362,24 @@ public class CartFrame extends JFrame {
                     JOptionPane.WARNING_MESSAGE
             );
         }
-    }
+    }//GEN-LAST:event_payBtnActionPerformed
 
-    private void backToCatalog() {
-        ItemListFrame itemListFrame = new ItemListFrame();
-        itemListFrame.setLocationRelativeTo(null);
-        itemListFrame.setVisible(true);
-        this.dispose();
-    }
-
-    public static void main(String[] args) {
+    public static void main(String args[]) {
+        com.formdev.flatlaf.FlatDarkLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new CartFrame().setVisible(true));
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backBtn;
+    private javax.swing.JTable cartTable;
+    private javax.swing.JButton clearCartBtn;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JTextField paidField;
+    private javax.swing.JLabel paidLabel;
+    private javax.swing.JButton payBtn;
+    private javax.swing.JLabel titleLabel;
+    private javax.swing.JTextField totalField;
+    private javax.swing.JLabel totalLabel;
+    // End of variables declaration//GEN-END:variables
 }

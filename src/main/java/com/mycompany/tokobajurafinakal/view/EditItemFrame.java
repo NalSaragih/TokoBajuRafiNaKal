@@ -1,41 +1,27 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
 
 import com.mycompany.tokobajurafinakal.entity.Product;
 import com.mycompany.tokobajurafinakal.repository.ProductRepository;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Files;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author Nala
  */
-public class EditItemFrame extends JFrame {
+public class EditItemFrame extends javax.swing.JFrame {
 
     private static final int PREVIEW_SIZE = 180;
 
@@ -44,14 +30,6 @@ public class EditItemFrame extends JFrame {
     private byte[] selectedImageBytes = null;
     private final ProductRepository productRepository = new ProductRepository();
 
-    private JTextField productNameField;
-    private JTextField productPriceField;
-    private JTextField productStockField;
-    private JTextArea descTextArea;
-    private JLabel lblImagePreview;
-    private JTextField txtImagePath;
-    private JLabel titleLabel;
-
     public EditItemFrame() {
         this(null, null);
     }
@@ -59,17 +37,15 @@ public class EditItemFrame extends JFrame {
     public EditItemFrame(Product product, InventoryFrame parentFrame) {
         this.currentProduct = product;
         this.parentFrame = parentFrame;
-        initUi();
+        initComponents();
+        setupCustomUi();
         if (product != null) {
             loadProduct(product);
         }
     }
 
-    private void initUi() {
-        setTitle("Toko Baju RafiNaKal - Edit Produk");
-        setSize(700, 490);
+    private void setupCustomUi() {
         setMinimumSize(new Dimension(660, 460));
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -77,135 +53,15 @@ public class EditItemFrame extends JFrame {
             }
         });
 
-        JPanel root = new JPanel(new BorderLayout(16, 16));
-        root.setBorder(BorderFactory.createEmptyBorder(20, 26, 20, 26));
+        UiUtil.styleSecondaryButton(backBtn);
+        UiUtil.styleSecondaryButton(chooseImageBtn);
+        UiUtil.styleSecondaryButton(removeImageBtn);
+        UiUtil.styleSecondaryButton(cancelBtn);
+        UiUtil.stylePrimaryButton(saveButton);
 
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
-        JButton backBtn = UiUtil.createBackButton("← Kembali");
-        backBtn.addActionListener(e -> handleBack());
-
-        titleLabel = UiUtil.createTitleLabel("Edit Produk");
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JPanel spacer = new JPanel();
-        spacer.setPreferredSize(backBtn.getPreferredSize());
-
-        headerPanel.add(backBtn, BorderLayout.WEST);
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
-        headerPanel.add(spacer, BorderLayout.EAST);
-        root.add(headerPanel, BorderLayout.NORTH);
-
-        JPanel contentPanel = new JPanel(new BorderLayout(28, 0));
-
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        productNameField = new JTextField();
-        productPriceField = new JTextField();
-        productStockField = new JTextField();
-
-        descTextArea = new JTextArea(5, 20);
-        descTextArea.setLineWrap(true);
-        descTextArea.setWrapStyleWord(true);
-        descTextArea.setFont(UiUtil.FONT_BODY);
-        JScrollPane descScroll = new JScrollPane(descTextArea);
-
-        addFormRow(formPanel, gbc, 0, "Nama Produk", productNameField);
-        addFormRow(formPanel, gbc, 1, "Harga (Rp)", productPriceField);
-        addFormRow(formPanel, gbc, 2, "Stok Saat Ini", productStockField);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.insets = new Insets(10, 0, 6, 14);
-        JLabel descLabel = new JLabel("Deskripsi");
-        descLabel.setFont(UiUtil.FONT_LABEL);
-        formPanel.add(descLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(6, 0, 6, 0);
-        formPanel.add(descScroll, gbc);
-
-        JPanel imagePanel = new JPanel(new BorderLayout(0, 8));
-        imagePanel.setPreferredSize(new Dimension(210, 280));
-
-        JLabel imgTitle = new JLabel("Foto Produk", SwingConstants.CENTER);
-        imgTitle.setFont(UiUtil.FONT_LABEL);
-
-        lblImagePreview = new JLabel("Tidak ada gambar", SwingConstants.CENTER);
-        lblImagePreview.setPreferredSize(new Dimension(PREVIEW_SIZE, PREVIEW_SIZE));
-        lblImagePreview.setForeground(UiUtil.MUTED_TEXT);
-        lblImagePreview.setBorder(UiUtil.createPreviewBorder());
-
-        txtImagePath = new JTextField("Tidak ada gambar");
-        txtImagePath.setEditable(false);
-        txtImagePath.setHorizontalAlignment(SwingConstants.CENTER);
-        txtImagePath.setFont(UiUtil.FONT_SUBTITLE);
-
-        JPanel imgBtnRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 0));
-        JButton chooseImageBtn = UiUtil.createSecondaryButton("Ganti Gambar...");
-        chooseImageBtn.addActionListener(e -> chooseImage());
-
-        JButton removeImageBtn = UiUtil.createSecondaryButton("Hapus");
-        removeImageBtn.addActionListener(e -> clearImage());
-
-        imgBtnRow.add(chooseImageBtn);
-        imgBtnRow.add(removeImageBtn);
-
-        JPanel imgBottom = new JPanel(new BorderLayout(0, 6));
-        imgBottom.add(txtImagePath, BorderLayout.NORTH);
-        imgBottom.add(imgBtnRow, BorderLayout.SOUTH);
-
-        imagePanel.add(imgTitle, BorderLayout.NORTH);
-        imagePanel.add(lblImagePreview, BorderLayout.CENTER);
-        imagePanel.add(imgBottom, BorderLayout.SOUTH);
-
-        contentPanel.add(formPanel, BorderLayout.CENTER);
-        contentPanel.add(imagePanel, BorderLayout.EAST);
-        root.add(contentPanel, BorderLayout.CENTER);
-
-        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        JButton cancelBtn = UiUtil.createSecondaryButton("Batal");
-        cancelBtn.setPreferredSize(new Dimension(100, 36));
-        cancelBtn.addActionListener(e -> handleBack());
-
-        JButton saveButton = UiUtil.createPrimaryButton("Simpan Perubahan");
-        saveButton.setPreferredSize(new Dimension(165, 36));
-        saveButton.addActionListener(e -> saveChanges());
-
-        footerPanel.add(cancelBtn);
-        footerPanel.add(saveButton);
-        root.add(footerPanel, BorderLayout.SOUTH);
-
-        setContentPane(root);
-        setLocationRelativeTo(parentFrame);
-    }
-
-    private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String labelText, JTextField field) {
-        gbc.gridx = 0;
-        gbc.gridy = row;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(6, 0, 6, 14);
-        JLabel label = new JLabel(labelText);
-        label.setFont(UiUtil.FONT_LABEL);
-        panel.add(label, gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(6, 0, 6, 0);
-        field.setPreferredSize(new Dimension(220, 32));
-        panel.add(field, gbc);
+        if (parentFrame != null) {
+            setLocationRelativeTo(parentFrame);
+        }
     }
 
     private void loadProduct(Product product) {
@@ -227,7 +83,244 @@ public class EditItemFrame extends JFrame {
         }
     }
 
-    private void chooseImage() {
+    private void clearImage() {
+        selectedImageBytes = null;
+        lblImagePreview.setIcon(null);
+        lblImagePreview.setText("Tidak ada gambar");
+        txtImagePath.setText("Tidak ada gambar");
+    }
+
+    private void handleBack() {
+        UiUtil.closeOrGoHome(this);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        backBtn = new javax.swing.JButton();
+        titleLabel = new javax.swing.JLabel();
+        lblName = new javax.swing.JLabel();
+        productNameField = new javax.swing.JTextField();
+        lblPrice = new javax.swing.JLabel();
+        productPriceField = new javax.swing.JTextField();
+        lblStock = new javax.swing.JLabel();
+        productStockField = new javax.swing.JTextField();
+        descLabel = new javax.swing.JLabel();
+        descScroll = new javax.swing.JScrollPane();
+        descTextArea = new javax.swing.JTextArea();
+        imgTitle = new javax.swing.JLabel();
+        lblImagePreview = new javax.swing.JLabel();
+        txtImagePath = new javax.swing.JTextField();
+        chooseImageBtn = new javax.swing.JButton();
+        removeImageBtn = new javax.swing.JButton();
+        cancelBtn = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Toko Baju RafiNaKal - Edit Produk");
+
+        mainPanel.setBackground(new java.awt.Color(43, 45, 48));
+
+        backBtn.setBackground(new java.awt.Color(72, 76, 82));
+        backBtn.setForeground(new java.awt.Color(235, 238, 242));
+        backBtn.setText("← Kembali");
+        backBtn.addActionListener(this::backBtnActionPerformed);
+
+        titleLabel.setForeground(new java.awt.Color(235, 238, 242));
+        titleLabel.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        titleLabel.setText("Edit Produk");
+
+        lblName.setForeground(new java.awt.Color(235, 238, 242));
+        lblName.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        lblName.setText("Nama Produk");
+
+        lblPrice.setForeground(new java.awt.Color(235, 238, 242));
+        lblPrice.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        lblPrice.setText("Harga (Rp)");
+
+        lblStock.setForeground(new java.awt.Color(235, 238, 242));
+        lblStock.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        lblStock.setText("Stok Saat Ini");
+
+        descLabel.setForeground(new java.awt.Color(235, 238, 242));
+        descLabel.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        descLabel.setText("Deskripsi");
+
+        descTextArea.setBackground(new java.awt.Color(58, 61, 66));
+        descTextArea.setForeground(new java.awt.Color(235, 238, 242));
+        descTextArea.setCaretColor(new java.awt.Color(235, 238, 242));
+        descTextArea.setColumns(20);
+        descTextArea.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        descTextArea.setLineWrap(true);
+        descTextArea.setRows(5);
+        descTextArea.setWrapStyleWord(true);
+        descScroll.setViewportView(descTextArea);
+
+        imgTitle.setForeground(new java.awt.Color(235, 238, 242));
+        imgTitle.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        imgTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        imgTitle.setText("Foto Produk");
+
+        lblImagePreview.setBackground(new java.awt.Color(54, 57, 62));
+        lblImagePreview.setForeground(new java.awt.Color(165, 170, 178));
+        lblImagePreview.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(88, 92, 98)));
+        lblImagePreview.setOpaque(true);
+        lblImagePreview.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblImagePreview.setText("Tidak ada gambar");
+
+        txtImagePath.setBackground(new java.awt.Color(58, 61, 66));
+        txtImagePath.setForeground(new java.awt.Color(235, 238, 242));
+        txtImagePath.setCaretColor(new java.awt.Color(235, 238, 242));
+        txtImagePath.setEditable(false);
+        txtImagePath.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtImagePath.setText("Tidak ada gambar");
+
+        chooseImageBtn.setBackground(new java.awt.Color(72, 76, 82));
+        chooseImageBtn.setForeground(new java.awt.Color(235, 238, 242));
+        chooseImageBtn.setText("Ganti Gambar...");
+        chooseImageBtn.addActionListener(this::chooseImageBtnActionPerformed);
+
+        removeImageBtn.setBackground(new java.awt.Color(168, 56, 56));
+        removeImageBtn.setForeground(new java.awt.Color(255, 255, 255));
+        removeImageBtn.setText("Hapus");
+        removeImageBtn.addActionListener(this::removeImageBtnActionPerformed);
+
+        cancelBtn.setBackground(new java.awt.Color(72, 76, 82));
+        cancelBtn.setForeground(new java.awt.Color(235, 238, 242));
+        cancelBtn.setText("Batal");
+        cancelBtn.addActionListener(this::cancelBtnActionPerformed);
+
+        saveButton.setBackground(new java.awt.Color(38, 117, 191));
+        saveButton.setForeground(new java.awt.Color(255, 255, 255));
+        saveButton.setText("Simpan Perubahan");
+        saveButton.addActionListener(this::saveButtonActionPerformed);
+
+        productNameField.setBackground(new java.awt.Color(58, 61, 66));
+        productNameField.setForeground(new java.awt.Color(235, 238, 242));
+        productNameField.setCaretColor(new java.awt.Color(235, 238, 242));
+
+        productPriceField.setBackground(new java.awt.Color(58, 61, 66));
+        productPriceField.setForeground(new java.awt.Color(235, 238, 242));
+        productPriceField.setCaretColor(new java.awt.Color(235, 238, 242));
+
+        productStockField.setBackground(new java.awt.Color(58, 61, 66));
+        productStockField.setForeground(new java.awt.Color(235, 238, 242));
+        productStockField.setCaretColor(new java.awt.Color(235, 238, 242));
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                        .addGap(115, 115, 115))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblName)
+                            .addComponent(lblPrice)
+                            .addComponent(lblStock)
+                            .addComponent(descLabel))
+                        .addGap(16, 16, 16)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(productNameField)
+                            .addComponent(productPriceField)
+                            .addComponent(productStockField)
+                            .addComponent(descScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
+                        .addGap(28, 28, 28)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(imgTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblImagePreview, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtImagePath)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(chooseImageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(removeImageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(26, 26, 26))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleLabel))
+                .addGap(20, 20, 20)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblName)
+                            .addComponent(productNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(12, 12, 12)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblPrice)
+                            .addComponent(productPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(12, 12, 12)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblStock)
+                            .addComponent(productStockField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(12, 12, 12)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(descLabel)
+                            .addComponent(descScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(imgTitle)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblImagePreview, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtImagePath, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(chooseImageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(removeImageBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        handleBack();
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
+        handleBack();
+    }//GEN-LAST:event_cancelBtnActionPerformed
+
+    private void chooseImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseImageBtnActionPerformed
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Gambar (JPG, PNG)", "jpg", "jpeg", "png");
         chooser.setFileFilter(filter);
@@ -246,16 +339,13 @@ public class EditItemFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Gagal membaca gambar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
+    }//GEN-LAST:event_chooseImageBtnActionPerformed
 
-    private void clearImage() {
-        selectedImageBytes = null;
-        lblImagePreview.setIcon(null);
-        lblImagePreview.setText("Tidak ada gambar");
-        txtImagePath.setText("Tidak ada gambar");
-    }
+    private void removeImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeImageBtnActionPerformed
+        clearImage();
+    }//GEN-LAST:event_removeImageBtnActionPerformed
 
-    private void saveChanges() {
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         if (currentProduct == null) {
             return;
         }
@@ -295,13 +385,32 @@ public class EditItemFrame extends JFrame {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Harga dan Stok harus berupa angka yang valid!", "Validasi", JOptionPane.WARNING_MESSAGE);
         }
-    }
+    }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void handleBack() {
-        UiUtil.closeOrGoHome(this);
-    }
-
-    public static void main(String[] args) {
+    public static void main(String args[]) {
+        com.formdev.flatlaf.FlatDarkLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new EditItemFrame().setVisible(true));
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backBtn;
+    private javax.swing.JButton cancelBtn;
+    private javax.swing.JButton chooseImageBtn;
+    private javax.swing.JLabel descLabel;
+    private javax.swing.JScrollPane descScroll;
+    private javax.swing.JTextArea descTextArea;
+    private javax.swing.JLabel imgTitle;
+    private javax.swing.JLabel lblImagePreview;
+    private javax.swing.JLabel lblName;
+    private javax.swing.JLabel lblPrice;
+    private javax.swing.JLabel lblStock;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JTextField productNameField;
+    private javax.swing.JTextField productPriceField;
+    private javax.swing.JTextField productStockField;
+    private javax.swing.JButton removeImageBtn;
+    private javax.swing.JButton saveButton;
+    private javax.swing.JLabel titleLabel;
+    private javax.swing.JTextField txtImagePath;
+    // End of variables declaration//GEN-END:variables
 }

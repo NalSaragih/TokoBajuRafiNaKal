@@ -1,48 +1,28 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
 
 import com.mycompany.tokobajurafinakal.entity.Product;
 import com.mycompany.tokobajurafinakal.model.CartModel;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 
 /**
  *
  * @author Nala
  */
-public class ItemDetailFrame extends JFrame {
+public class ItemDetailFrame extends javax.swing.JFrame {
 
     private static final int IMG_WIDTH = 240;
     private static final int IMG_HEIGHT = 290;
 
     private Product currentProduct;
-    private JLabel idLabel;
-    private JLabel nameLabel;
-    private JLabel priceLabel;
-    private JLabel stockLabel;
-    private JLabel imgLabel;
-    private JTextArea descTextArea;
-    private JButton addCartBtn;
 
     public ItemDetailFrame() {
         this(null);
@@ -50,17 +30,15 @@ public class ItemDetailFrame extends JFrame {
 
     public ItemDetailFrame(Product product) {
         this.currentProduct = product;
-        initUi();
+        initComponents();
+        setupCustomUi();
         if (product != null) {
             loadProductDetails(product);
         }
     }
 
-    private void initUi() {
-        setTitle("Toko Baju RafiNaKal - Detail Produk");
-        setSize(680, 470);
+    private void setupCustomUi() {
         setMinimumSize(new Dimension(640, 440));
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -68,94 +46,9 @@ public class ItemDetailFrame extends JFrame {
             }
         });
 
-        JPanel root = new JPanel(new BorderLayout(18, 16));
-        root.setBorder(BorderFactory.createEmptyBorder(20, 26, 20, 26));
-
-        JPanel headerPanel = new JPanel(new BorderLayout(12, 0));
-        JButton backBtn = UiUtil.createBackButton("← Kembali");
-        backBtn.addActionListener(e -> UiUtil.closeOrGoHome(this));
-
-        JLabel titleLabel = UiUtil.createTitleLabel("Detail Produk");
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JPanel spacer = new JPanel();
-        spacer.setPreferredSize(backBtn.getPreferredSize());
-
-        headerPanel.add(backBtn, BorderLayout.WEST);
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
-        headerPanel.add(spacer, BorderLayout.EAST);
-        root.add(headerPanel, BorderLayout.NORTH);
-
-        JPanel contentPanel = new JPanel(new BorderLayout(24, 0));
-
-        imgLabel = new JLabel("Tidak ada gambar", SwingConstants.CENTER);
-        imgLabel.setPreferredSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
-        imgLabel.setForeground(UiUtil.MUTED_TEXT);
-        imgLabel.setBorder(UiUtil.createPreviewBorder());
-
-        JPanel infoPanel = new JPanel(new BorderLayout(0, 12));
-
-        JPanel metaPanel = new JPanel();
-        metaPanel.setLayout(new BoxLayout(metaPanel, BoxLayout.Y_AXIS));
-
-        idLabel = new JLabel("ID Produk: -");
-        idLabel.setFont(UiUtil.FONT_SUBTITLE);
-        idLabel.setForeground(UiUtil.MUTED_TEXT);
-
-        nameLabel = new JLabel("Nama Produk");
-        nameLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
-
-        priceLabel = new JLabel("Rp 0");
-        priceLabel.setFont(new Font("SansSerif", Font.BOLD, 17));
-        priceLabel.setForeground(UiUtil.ACCENT_GREEN);
-
-        stockLabel = new JLabel("Stok Tersedia: 0");
-        stockLabel.setFont(UiUtil.FONT_BODY);
-
-        metaPanel.add(idLabel);
-        metaPanel.add(Box.createVerticalStrut(4));
-        metaPanel.add(nameLabel);
-        metaPanel.add(Box.createVerticalStrut(6));
-        metaPanel.add(priceLabel);
-        metaPanel.add(Box.createVerticalStrut(6));
-        metaPanel.add(stockLabel);
-
-        JPanel descPanel = new JPanel(new BorderLayout(0, 6));
-        JLabel descHeader = new JLabel("Deskripsi Produk");
-        descHeader.setFont(UiUtil.FONT_LABEL);
-
-        descTextArea = new JTextArea();
-        descTextArea.setEditable(false);
-        descTextArea.setLineWrap(true);
-        descTextArea.setWrapStyleWord(true);
-        descTextArea.setFont(UiUtil.FONT_BODY);
-        JScrollPane scrollPane = new JScrollPane(descTextArea);
-
-        descPanel.add(descHeader, BorderLayout.NORTH);
-        descPanel.add(scrollPane, BorderLayout.CENTER);
-
-        infoPanel.add(metaPanel, BorderLayout.NORTH);
-        infoPanel.add(descPanel, BorderLayout.CENTER);
-
-        contentPanel.add(imgLabel, BorderLayout.WEST);
-        contentPanel.add(infoPanel, BorderLayout.CENTER);
-        root.add(contentPanel, BorderLayout.CENTER);
-
-        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        JButton closeBtn = UiUtil.createSecondaryButton("Tutup");
-        closeBtn.setPreferredSize(new Dimension(100, 36));
-        closeBtn.addActionListener(e -> UiUtil.closeOrGoHome(this));
-
-        addCartBtn = UiUtil.createPrimaryButton("+ Masuk Keranjang");
-        addCartBtn.setPreferredSize(new Dimension(165, 36));
-        addCartBtn.addActionListener(e -> addCurrentProductToCart());
-
-        footerPanel.add(closeBtn);
-        footerPanel.add(addCartBtn);
-        root.add(footerPanel, BorderLayout.SOUTH);
-
-        setContentPane(root);
-        setLocationRelativeTo(null);
+        UiUtil.styleSecondaryButton(backBtn);
+        UiUtil.styleSecondaryButton(closeBtn);
+        UiUtil.stylePrimaryButton(addCartBtn);
     }
 
     private void loadProductDetails(Product product) {
@@ -185,7 +78,174 @@ public class ItemDetailFrame extends JFrame {
         }
     }
 
-    private void addCurrentProductToCart() {
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        backBtn = new javax.swing.JButton();
+        titleLabel = new javax.swing.JLabel();
+        imgLabel = new javax.swing.JLabel();
+        idLabel = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
+        priceLabel = new javax.swing.JLabel();
+        stockLabel = new javax.swing.JLabel();
+        descHeader = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        descTextArea = new javax.swing.JTextArea();
+        closeBtn = new javax.swing.JButton();
+        addCartBtn = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Toko Baju RafiNaKal - Detail Produk");
+
+        mainPanel.setBackground(new java.awt.Color(43, 45, 48));
+
+        backBtn.setBackground(new java.awt.Color(72, 76, 82));
+        backBtn.setForeground(new java.awt.Color(235, 238, 242));
+        backBtn.setText("← Kembali");
+        backBtn.addActionListener(this::backBtnActionPerformed);
+
+        titleLabel.setForeground(new java.awt.Color(235, 238, 242));
+        titleLabel.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        titleLabel.setText("Detail Produk");
+
+        imgLabel.setBackground(new java.awt.Color(54, 57, 62));
+        imgLabel.setForeground(new java.awt.Color(165, 170, 178));
+        imgLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(88, 92, 98)));
+        imgLabel.setOpaque(true);
+        imgLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        imgLabel.setText("Tidak ada gambar");
+
+        idLabel.setForeground(new java.awt.Color(165, 170, 178));
+        idLabel.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        idLabel.setText("ID Produk: -");
+
+        nameLabel.setForeground(new java.awt.Color(235, 238, 242));
+        nameLabel.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        nameLabel.setText("Nama Produk");
+
+        priceLabel.setForeground(new java.awt.Color(74, 201, 126));
+        priceLabel.setFont(new java.awt.Font("SansSerif", 1, 17)); // NOI18N
+        priceLabel.setText("Rp 0");
+
+        stockLabel.setForeground(new java.awt.Color(235, 238, 242));
+        stockLabel.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        stockLabel.setText("Stok Tersedia: 0");
+
+        descHeader.setForeground(new java.awt.Color(235, 238, 242));
+        descHeader.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        descHeader.setText("Deskripsi Produk");
+
+        descTextArea.setBackground(new java.awt.Color(58, 61, 66));
+        descTextArea.setForeground(new java.awt.Color(235, 238, 242));
+        descTextArea.setCaretColor(new java.awt.Color(235, 238, 242));
+        descTextArea.setEditable(false);
+        descTextArea.setColumns(20);
+        descTextArea.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        descTextArea.setLineWrap(true);
+        descTextArea.setRows(5);
+        descTextArea.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(descTextArea);
+
+        closeBtn.setBackground(new java.awt.Color(72, 76, 82));
+        closeBtn.setForeground(new java.awt.Color(235, 238, 242));
+        closeBtn.setText("Tutup");
+        closeBtn.addActionListener(this::closeBtnActionPerformed);
+
+        addCartBtn.setBackground(new java.awt.Color(38, 117, 191));
+        addCartBtn.setForeground(new java.awt.Color(255, 255, 255));
+        addCartBtn.setText("+ Masuk Keranjang");
+        addCartBtn.addActionListener(this::addCartBtnActionPerformed);
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                        .addGap(115, 115, 115))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24)
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(idLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(priceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(stockLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(descHeader)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(closeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(addCartBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(26, 26, 26))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleLabel))
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(imgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(idLabel)
+                        .addGap(4, 4, 4)
+                        .addComponent(nameLabel)
+                        .addGap(6, 6, 6)
+                        .addComponent(priceLabel)
+                        .addGap(6, 6, 6)
+                        .addComponent(stockLabel)
+                        .addGap(12, 12, 12)
+                        .addComponent(descHeader)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(closeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addCartBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        UiUtil.closeOrGoHome(this);
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void closeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeBtnActionPerformed
+        UiUtil.closeOrGoHome(this);
+    }//GEN-LAST:event_closeBtnActionPerformed
+
+    private void addCartBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCartBtnActionPerformed
         if (currentProduct == null) {
             return;
         }
@@ -199,9 +259,26 @@ public class ItemDetailFrame extends JFrame {
                     "Stok Habis",
                     JOptionPane.WARNING_MESSAGE);
         }
-    }
+    }//GEN-LAST:event_addCartBtnActionPerformed
 
-    public static void main(String[] args) {
+    public static void main(String args[]) {
+        com.formdev.flatlaf.FlatDarkLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new ItemDetailFrame().setVisible(true));
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addCartBtn;
+    private javax.swing.JButton backBtn;
+    private javax.swing.JButton closeBtn;
+    private javax.swing.JLabel descHeader;
+    private javax.swing.JTextArea descTextArea;
+    private javax.swing.JLabel idLabel;
+    private javax.swing.JLabel imgLabel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JLabel nameLabel;
+    private javax.swing.JLabel priceLabel;
+    private javax.swing.JLabel stockLabel;
+    private javax.swing.JLabel titleLabel;
+    // End of variables declaration//GEN-END:variables
 }

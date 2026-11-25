@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.tokobajurafinakal.view;
 
@@ -8,22 +8,12 @@ import com.mycompany.tokobajurafinakal.entity.Product;
 import com.mycompany.tokobajurafinakal.model.CartItem;
 import com.mycompany.tokobajurafinakal.model.CartModel;
 import com.mycompany.tokobajurafinakal.repository.ProductRepository;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -32,49 +22,28 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Nala
  */
-public class ItemListFrame extends JFrame {
+public class ItemListFrame extends javax.swing.JFrame {
 
     private List<Product> allProducts = new ArrayList<>();
     private List<Product> displayedProducts = new ArrayList<>();
     private final ProductRepository productRepository = new ProductRepository();
 
-    private JTable productTable;
-    private JTextField searchField;
-    private JButton cartBtn;
-
     public ItemListFrame() {
-        initUi();
+        initComponents();
+        setupCustomUi();
         loadProductsToTable();
         updateCartBadge();
     }
 
-    private void initUi() {
-        setTitle("Toko Baju RafiNaKal - Katalog Produk");
-        setSize(820, 540);
+    private void setupCustomUi() {
         setMinimumSize(new Dimension(760, 480));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(new NavBar(this));
 
-        JPanel root = new JPanel(new BorderLayout(0, 14));
-        root.setBorder(BorderFactory.createEmptyBorder(18, 24, 20, 24));
+        UiUtil.styleSecondaryButton(backBtn);
+        UiUtil.styleSecondaryButton(refreshBtn);
+        UiUtil.styleSecondaryButton(historyBtn);
+        UiUtil.stylePrimaryButton(cartBtn);
 
-        JPanel headerPanel = new JPanel(new BorderLayout(16, 0));
-
-        JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JButton backBtn = UiUtil.createBackButton("← Beranda");
-        backBtn.addActionListener(e -> {
-            HomeFrame home = new HomeFrame();
-            home.setLocationRelativeTo(null);
-            home.setVisible(true);
-            this.dispose();
-        });
-        leftHeader.add(backBtn);
-
-        JLabel titleLabel = UiUtil.createTitleLabel("Katalog Produk");
-
-        JPanel rightHeader = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        searchField = new JTextField(16);
-        searchField.setPreferredSize(new Dimension(190, 32));
         searchField.putClientProperty("JTextField.placeholderText", "Cari nama produk...");
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -93,82 +62,12 @@ public class ItemListFrame extends JFrame {
             }
         });
 
-        JButton refreshBtn = UiUtil.createSecondaryButton("Muat Ulang");
-        refreshBtn.setPreferredSize(new Dimension(105, 32));
-        refreshBtn.addActionListener(e -> loadProductsToTable());
-
-        rightHeader.add(searchField);
-        rightHeader.add(refreshBtn);
-
-        JPanel centerTitleWrap = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 3));
-        centerTitleWrap.add(titleLabel);
-
-        headerPanel.add(leftHeader, BorderLayout.WEST);
-        headerPanel.add(centerTitleWrap, BorderLayout.CENTER);
-        headerPanel.add(rightHeader, BorderLayout.EAST);
-        root.add(headerPanel, BorderLayout.NORTH);
-
-        DefaultTableModel tableModel = new DefaultTableModel(
-                new Object[][]{},
-                new String[]{"Nama Produk", "Stok", "Harga", "Detail", "Aksi"}
-        ) {
-            private final boolean[] canEdit = new boolean[]{false, false, false, true, true};
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        };
-
-        productTable = new JTable(tableModel);
         UiUtil.styleTable(productTable);
         setupTableColumns();
-
-        JScrollPane scrollPane = new JScrollPane(productTable);
-        root.add(scrollPane, BorderLayout.CENTER);
-
-        JPanel footerPanel = new JPanel(new BorderLayout());
-
-        JPanel leftFooter = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JButton historyBtn = UiUtil.createSecondaryButton("Riwayat Transaksi");
-        historyBtn.setPreferredSize(new Dimension(155, 36));
-        historyBtn.addActionListener(e -> {
-            TransactionHistoryFrame historyFrame = new TransactionHistoryFrame();
-            historyFrame.setLocationRelativeTo(this);
-            historyFrame.setVisible(true);
-        });
-        leftFooter.add(historyBtn);
-
-        JPanel rightFooter = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        cartBtn = UiUtil.createPrimaryButton("Lihat Keranjang (0)");
-        cartBtn.setPreferredSize(new Dimension(190, 36));
-        cartBtn.addActionListener(e -> {
-            CartFrame cartFrame = new CartFrame();
-            cartFrame.setLocationRelativeTo(null);
-            cartFrame.setVisible(true);
-            this.dispose();
-        });
-        rightFooter.add(cartBtn);
-
-        footerPanel.add(leftFooter, BorderLayout.WEST);
-        footerPanel.add(rightFooter, BorderLayout.EAST);
-        root.add(footerPanel, BorderLayout.SOUTH);
-
-        setContentPane(root);
-        setLocationRelativeTo(null);
     }
 
     private void setupTableColumns() {
         var colModel = productTable.getColumnModel();
-        colModel.getColumn(0).setPreferredWidth(260);
-        colModel.getColumn(1).setPreferredWidth(75);
-        colModel.getColumn(1).setMaxWidth(95);
-        colModel.getColumn(2).setPreferredWidth(135);
-        colModel.getColumn(3).setPreferredWidth(95);
-        colModel.getColumn(3).setMaxWidth(110);
-        colModel.getColumn(4).setPreferredWidth(120);
-        colModel.getColumn(4).setMaxWidth(135);
-
         colModel.getColumn(1).setCellRenderer(UiUtil.centerRenderer());
         colModel.getColumn(2).setCellRenderer(UiUtil.rightRenderer());
 
@@ -239,7 +138,190 @@ public class ItemListFrame extends JFrame {
         cartBtn.setText("Lihat Keranjang (" + totalItems + ")");
     }
 
-    public static void main(String[] args) {
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        backBtn = new javax.swing.JButton();
+        titleLabel = new javax.swing.JLabel();
+        searchField = new javax.swing.JTextField();
+        refreshBtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        productTable = new javax.swing.JTable();
+        historyBtn = new javax.swing.JButton();
+        cartBtn = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Toko Baju RafiNaKal - Katalog Produk");
+
+        mainPanel.setBackground(new java.awt.Color(43, 45, 48));
+
+        backBtn.setBackground(new java.awt.Color(72, 76, 82));
+        backBtn.setForeground(new java.awt.Color(235, 238, 242));
+        backBtn.setText("← Beranda");
+        backBtn.addActionListener(this::backBtnActionPerformed);
+
+        titleLabel.setForeground(new java.awt.Color(235, 238, 242));
+        titleLabel.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        titleLabel.setText("Katalog Produk");
+
+        refreshBtn.setBackground(new java.awt.Color(72, 76, 82));
+        refreshBtn.setForeground(new java.awt.Color(235, 238, 242));
+        refreshBtn.setText("Muat Ulang");
+        refreshBtn.addActionListener(this::refreshBtnActionPerformed);
+
+        productTable.setBackground(new java.awt.Color(52, 55, 60));
+        productTable.setForeground(new java.awt.Color(235, 238, 242));
+        productTable.setRowHeight(36);
+        productTable.setSelectionBackground(new java.awt.Color(38, 117, 191));
+        productTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        productTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nama Produk", "Stok", "Harga", "Detail", "Aksi"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        productTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(productTable);
+        if (productTable.getColumnModel().getColumnCount() > 0) {
+            productTable.getColumnModel().getColumn(0).setMinWidth(180);
+            productTable.getColumnModel().getColumn(0).setPreferredWidth(260);
+            productTable.getColumnModel().getColumn(1).setMinWidth(65);
+            productTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+            productTable.getColumnModel().getColumn(1).setMaxWidth(95);
+            productTable.getColumnModel().getColumn(2).setMinWidth(100);
+            productTable.getColumnModel().getColumn(2).setPreferredWidth(135);
+            productTable.getColumnModel().getColumn(3).setMinWidth(85);
+            productTable.getColumnModel().getColumn(3).setPreferredWidth(95);
+            productTable.getColumnModel().getColumn(3).setMaxWidth(110);
+            productTable.getColumnModel().getColumn(4).setMinWidth(105);
+            productTable.getColumnModel().getColumn(4).setPreferredWidth(120);
+            productTable.getColumnModel().getColumn(4).setMaxWidth(135);
+        }
+
+        historyBtn.setBackground(new java.awt.Color(72, 76, 82));
+        historyBtn.setForeground(new java.awt.Color(235, 238, 242));
+        historyBtn.setText("Riwayat Transaksi");
+        historyBtn.addActionListener(this::historyBtnActionPerformed);
+
+        cartBtn.setBackground(new java.awt.Color(38, 117, 191));
+        cartBtn.setForeground(new java.awt.Color(255, 255, 255));
+        cartBtn.setText("Lihat Keranjang (0)");
+        cartBtn.addActionListener(this::cartBtnActionPerformed);
+
+        searchField.setBackground(new java.awt.Color(58, 61, 66));
+        searchField.setForeground(new java.awt.Color(235, 238, 242));
+        searchField.setCaretColor(new java.awt.Color(235, 238, 242));
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(titleLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(historyBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cartBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(24, 24, 24))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(backBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleLabel)
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(historyBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cartBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        HomeFrame home = new HomeFrame();
+        home.setLocationRelativeTo(null);
+        home.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_backBtnActionPerformed
+
+    private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
+        loadProductsToTable();
+    }//GEN-LAST:event_refreshBtnActionPerformed
+
+    private void historyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historyBtnActionPerformed
+        TransactionHistoryFrame historyFrame = new TransactionHistoryFrame();
+        historyFrame.setLocationRelativeTo(this);
+        historyFrame.setVisible(true);
+    }//GEN-LAST:event_historyBtnActionPerformed
+
+    private void cartBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartBtnActionPerformed
+        CartFrame cartFrame = new CartFrame();
+        cartFrame.setLocationRelativeTo(null);
+        cartFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_cartBtnActionPerformed
+
+    public static void main(String args[]) {
+        com.formdev.flatlaf.FlatDarkLaf.setup();
         java.awt.EventQueue.invokeLater(() -> new ItemListFrame().setVisible(true));
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backBtn;
+    private javax.swing.JButton cartBtn;
+    private javax.swing.JButton historyBtn;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JTable productTable;
+    private javax.swing.JButton refreshBtn;
+    private javax.swing.JTextField searchField;
+    private javax.swing.JLabel titleLabel;
+    // End of variables declaration//GEN-END:variables
 }

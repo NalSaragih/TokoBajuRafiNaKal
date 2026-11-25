@@ -19,7 +19,7 @@ public class TransactionRepository {
         String insertDetailSql = "INSERT INTO transaction_details (transaction_id, product_id, quantity, subtotal) VALUES (?, ?, ?, ?)";
         String updateStockSql = "UPDATE products SET current_stock = current_stock - ? WHERE product_id = ?";
         String insertLogSql = "INSERT INTO product_logs (product_id, log_date, quantity_change, log_type) VALUES (?, CURDATE(), ?, 'SALE')";
-        
+
         Connection conn = null;
         try {
             conn = DatabaseUtil.getConnection();
